@@ -1,7 +1,7 @@
 ﻿using LBMergedMods.Hooks;
 using UnityEngine;
 
-namespace FGLBspecific;
+namespace ModCompat;
 
 public static class LBspecific
 {

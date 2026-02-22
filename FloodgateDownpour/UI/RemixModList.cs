@@ -12,8 +12,8 @@ namespace Floodgate.UI;
 public static class RemixModList
 {
     //this may not be that accurate
-    public static DateTime watcherRelease = new DateTime(2025, 9, 26);
-    public static TimeSpan elapsedTime => new DateTime(2025, 10, 16) - watcherRelease;
+    public static DateTime watcherRelease = new DateTime(2025, 12, 17);
+    public static TimeSpan elapsedTime => new DateTime(2025, 12, 27) - watcherRelease;
     //readonly, no need to assign twice
     public static readonly ConditionalWeakTable<MenuModList.ModButton, InfoDot> InfoDots = new();
 

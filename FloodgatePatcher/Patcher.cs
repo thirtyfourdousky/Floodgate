@@ -46,5 +46,6 @@ public static class Patcher
         ModLoader.AssemblyCSharp = AppDomain.CurrentDomain.GetAssemblies().First(i => i.GetName().Name == "Assembly-CSharp");
 
         OtherHooks.Apply();
+        //TurboAssetManager.Apply();
     }
 }

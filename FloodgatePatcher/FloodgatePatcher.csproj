@@ -55,12 +55,14 @@
   <ItemGroup>
     <Compile Include="CustomLog.cs" />
     <Compile Include="Exceptions\LoopException.cs" />
-    <None Include="FloodgatePatchers\RainWorldDrought.cs" />
     <Compile Include="ModLoader.cs" />
     <Compile Include="OtherHooks.cs" />
     <Compile Include="Patcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TurboAssetManager.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="FloodgatePatchers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

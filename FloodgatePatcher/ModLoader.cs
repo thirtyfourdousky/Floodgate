@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.MultiFolderLoader;
 using Mono.Cecil;
+using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,11 @@ using System.Reflection;
 namespace FloodgatePatcher;
 public static class ModLoader
 {
-    public static readonly string LatestVersion = "v1.11.1";
+    public static readonly string LatestVersion = "v1.11.6";
     public static string CurrentVersion = "";
     public static bool IsLatest = false;
+    public static string FloodgateMergedPath = null;
+    public static DirectoryInfo FloodgateMergedInfo = null;
 
     const string newest = "newest";
     const string plugins = "plugins";
@@ -43,14 +46,43 @@ public static class ModLoader
         //load current game version
         CurrentVersion = File.ReadAllText(Path.Combine(Paths.GameRootPath, "RainWorld_Data", "StreamingAssets", "GameVersion.txt"));
         CacheLocation = Path.Combine(Paths.GameRootPath, "RainWorld_Data", "StreamingAssets", "FloodgatePatchedAssemblies");
+        FloodgateMergedInfo = new DirectoryInfo(FloodgateMergedPath = Path.Combine(Paths.GameRootPath, "RainWorld_Data", "StreamingAssets", "FloodgateMergedMods"));
         if (!Directory.Exists(CacheLocation))
         {
             CustomLog.Log("Creating cached assemblies location at " + CacheLocation);
             Directory.CreateDirectory(CacheLocation);
         }
+        if (!Directory.Exists(FloodgateMergedPath))
+        {
+            CustomLog.Log("Creating Floodgate Merged Mods at "+ FloodgateMergedPath);
+            //Directory.CreateDirectory(FloodgateMergedPath);
+            //FloodgateMergedInfo.Refresh();
+            FloodgateMergedInfo.Create();
+        }
+        else
+        {
+            FloodgateMergedInfo.Refresh();
+            if (FloodgateMergedInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            {
+                CustomLog.Log("Floodgate Merged Mods directory at " + FloodgateMergedPath + " is a symbolic link or junction. if this is intended by you, do NOT.");
+                FloodgateMergedInfo.Delete();
+                FloodgateMergedInfo.Create();
+            }
+        }
+        foreach(string file in Directory.GetFiles(FloodgateMergedInfo.FullName, "*.*", SearchOption.AllDirectories))
+        {
+            string path = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            if(path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".sys", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".ini", StringComparison.OrdinalIgnoreCase))
+            {
+                CustomLog.LogError("Floodgate merged files ["+ FloodgateMergedPath +"] contains executables, disabling it\nPlease check it");
+                FloodgateMergedInfo = null;
+                break;
+            }
+        }
         //override MultiFolderLoader assembly resolving
         Hooks.Add(new Hook(typeof(ModManager).GetMethod("ResolveModDirectories", BindingFlags.NonPublic | BindingFlags.Static), ResolveModDirectories));
         Hooks.Add(new Hook(typeof(Utility).GetMethod("TryResolveDllAssembly", BindingFlags.Public | BindingFlags.Static, null, [typeof(AssemblyName), typeof(string), typeof(Assembly).MakeByRefType()], null), TryResolveDllAssemblyOverride));
+        //Hooks.Add(new ILHook(typeof(Utility).GetMethod("TryResolveDllAssembly", BindingFlags.Public | BindingFlags.Static, null, [typeof(AssemblyName), typeof(string), typeof(Assembly).MakeByRefType()], null), IL_TryResolveDllAssembly));
 
         //IsLatest = (CurrentVersion == LatestVersion) || (int.Parse(new(CurrentVersion.Where(char.IsDigit).ToArray())) >= int.Parse(new(LatestVersion.Where(char.IsDigit).ToArray())));
         IsLatest = ParseLatestVersion(LatestVersion, CurrentVersion);
@@ -64,6 +96,7 @@ public static class ModLoader
         FloodgatePath = PatcherDir.FullName;
 
         CustomLog.Log("Floodgate Patcher initiated. Latest Game Version: " + LatestVersion + " - Current Version: " + CurrentVersion);
+        CustomLog.Log("Is latest version: " + IsLatest);
         CustomLog.Log("Current Floodgate path is: " + FloodgatePath);
     }
     public delegate bool delLoader<T>(AssemblyName assemblyName, string dir, out T assembly);
@@ -123,54 +156,62 @@ public static class ModLoader
 
     public static bool Patch(string path, AssemblyName assemblyName, out string? patchPath)
     {
-        bool patched = false;
-        string formattedAssemblyName = assemblyName.Name.Replace(" ", "");
-        List<Type> patchers = AppDomain.CurrentDomain.GetAssemblies().Select(i => i?.GetType("FloodgatePatchers." + formattedAssemblyName, false, true)).Where(ix=>ix != null).ToList()!;
-
-    TRYAGAIN:
-        AssemblyDefinition? assembly = AssemblyDefinition.ReadAssembly(path);
         try
         {
-            for(int i = 0; i < patchers.Count; i++)
+            bool patched = false;
+            string formattedAssemblyName = assemblyName.Name.Replace(" ", "");
+            List<Type> patchers = AppDomain.CurrentDomain.GetAssemblies().Select(i => i?.GetType("FloodgatePatchers." + formattedAssemblyName, false, true)).Where(ix => ix != null).ToList()!;
+
+        TRYAGAIN:
+            AssemblyDefinition? assembly = AssemblyDefinition.ReadAssembly(path);
+            try
             {
-                try
+                for (int i = 0; i < patchers.Count; i++)
                 {
-                    MethodInfo? patcher = patchers[i]?.GetMethod("Patcher", BindingFlags.Public | BindingFlags.Static);
-                    if (patcher != null)
+                    try
                     {
-                        object[] param = [assembly];
-                        CustomLog.Log("Trying to patch " + assemblyName.Name + " using " + patchers[i].FullName);
-                        patcher.Invoke(null, param);
-                        CustomLog.Log("Sucessfully patched " + assemblyName.Name + " using " + patchers[i].FullName);
-                        assembly = (AssemblyDefinition)param[0];
-                        patched = true;
+                        MethodInfo? patcher = patchers[i]?.GetMethod("Patcher", BindingFlags.Public | BindingFlags.Static, null, [typeof(AssemblyDefinition).MakeByRefType(), typeof(string), typeof(bool)], null);
+                        if (patcher != null)
+                        {
+                            object[] param = [assembly, CurrentVersion, IsLatest];
+                            CustomLog.Log("Trying to patch " + assemblyName.Name + " using " + patchers[i].Assembly.FullName + " -- " + patchers[i].FullName);
+                            patcher.Invoke(null, param);
+                            CustomLog.Log("Sucessfully patched " + assemblyName.Name + " using " + patchers[i].FullName);
+                            assembly = (AssemblyDefinition)param[0];
+                            patched = true;
+                        }
+                    }
+                    catch (Exception PatchEx)
+                    {
+                        CustomLog.LogError("skipping " + patchers[i].AssemblyQualifiedName + "\n" + PatchEx.ToString());
+                        patchers.RemoveAt(i);
+                        patched = false;
+                        goto TRYAGAIN;
                     }
                 }
-                catch (Exception PatchEx)
-                {
-                    CustomLog.LogError("skipping " + patchers[i].AssemblyQualifiedName + "\n" + PatchEx.ToString());
-                    patchers.RemoveAt(i);
-                    patched = false;
-                    goto TRYAGAIN;
-                }
             }
-        }
-        catch(Exception ex)
-        {
-            CustomLog.LogError(ex.ToString());
-            patched = false;
-        }
-        if(patched)
-        {
-            patchPath = Path.Combine(CacheLocation, assemblyName.Name +".dll");
-            assembly.Write(patchPath);
-        }
-        else
-        {
-            patchPath = null;
-        }
+            catch (Exception ex)
+            {
+                CustomLog.LogError(ex.ToString());
+                patched = false;
+            }
+            if (patched)
+            {
+                patchPath = Path.Combine(CacheLocation, assemblyName.Name + ".dll");
+                assembly.Write(patchPath);
+            }
+            else
+            {
+                patchPath = null;
+            }
 
-        return patched;
+            return patched;
+        }catch (Exception ex)
+        {
+            CustomLog.LogError("Assembly Patcher Fucked Up\n"+ex.ToString());
+            patchPath = null;
+            return false;
+        }
     }
 
     public static Dictionary<string, string?> OverridenPaths = new();
@@ -182,10 +223,19 @@ public static class ModLoader
         {
             return OverridenPaths[fallback] ?? fallback;
         }
-        bool overridFound = FetchAssembly(ResolveAssembly, AssemblyName.GetAssemblyName(fallback), out string? overrid);
+        AssemblyName asmName = AssemblyName.GetAssemblyName(fallback);
+        bool overridFound = FetchAssembly(ResolveAssembly, asmName, out string? overrid);
         string res = overrid ?? fallback;
+        if (IsLatest && fallback.ToLowerInvariant().Contains("newest") && overridFound && fallback != overrid)
+        {
+            CustomLog.Log("Mod Loader Fucked Up, reverting from " + res + " to " + fallback);
+            res = fallback;
+        }
+        if (OverrideAssembly(res, asmName, out string asmOverride))
+        {
+            res = asmOverride;
+        }
         bool overriden = res != fallback;
-
 
         if (!overridFound)
         {
@@ -193,7 +243,7 @@ public static class ModLoader
         }
         if (overriden)
         {
-            CustomLog.Log("Found different assembly path from " + fallback + " at " +  overrid);
+            CustomLog.Log("Found different assembly path from " + fallback + " at " +  res);
         }
         AssemblyName assemblyName = AssemblyName.GetAssemblyName(res);
         try
@@ -254,7 +304,11 @@ public static class ModLoader
         List<string> paths = [dir, .. Directory.GetDirectories(dir, "*", SearchOption.AllDirectories)];
         foreach(var i  in paths)
         {
-            string text = Path.Combine(i, assemblyName.Name + ".dll");
+            string text;
+            if(OverrideAssembly((text = Path.Combine(i, assemblyName.Name + ".dll")), assemblyName, out string asmOverride))
+            {
+                text = asmOverride;
+            }
             if (File.Exists(text))
             {
                 bool loaded = false;
@@ -262,7 +316,7 @@ public static class ModLoader
                 {
                     if (Patch(text, assemblyName, out string patchPath))
                     {
-                        assembly = Assembly.Load(patchPath);
+                        assembly = Assembly.LoadFile(patchPath);
                         loaded = true;
                         CustomLog.Log("Loaded patched assembly " + assemblyName.Name + " from " + text);
                     }
@@ -300,4 +354,90 @@ public static class ModLoader
         }
         return res;
     }
+    public static void IL_TryResolveDllAssembly(ILContext il)
+    {
+        try
+        {
+            ILCursor c = new(il);
+            if (c.TryGotoNext(MoveType.After, i => i.MatchNop()))
+            {
+                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloca_S, (byte)1);
+                c.EmitDelegate(delegate (ref string text2)
+                {
+                    if (OverrideAssembly(text2, AssemblyName.GetAssemblyName(text2), out string asmOverride))
+                    {
+                        text2 = asmOverride;
+                    }
+                });
+            }
+            else
+            {
+                CustomLog.Log("Couldn't IL hook TryResolveDllAssembly");
+            }
+        }
+        catch (Exception ex)
+        {
+            CustomLog.LogError(ex.ToString());
+        }
+    }
+
+    public static bool OverrideAssembly(string path, AssemblyName assemblyName, out string assembly)
+    {
+        try
+        {
+            if (!File.Exists(path))
+            {
+                assembly = null;
+                return false;
+            }
+            string hash = null;
+            using (FileStream fs = File.OpenRead(path))
+            using (System.Security.Cryptography.SHA512 sha512 = System.Security.Cryptography.SHA512.Create())
+            {
+                hash = string.Join("", sha512.ComputeHash(fs).Select(x => x.ToString("x2")));
+            }
+            string overridepath;
+            if (IsLatest && hash is not null &&
+                File.Exists((overridepath = Path.Combine(FloodgatePath, "AssemblyOverride", hash, assemblyName.Name + ".fdll"))))
+            { 
+                CustomLog.Log("Overriding assembly path `" + path + "` with `" + overridepath + "`");
+                assembly = overridepath;
+                return true;
+            }
+            else
+            {
+                assembly = null;
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            CustomLog.LogError(e.ToString());
+            assembly = null;
+            return false;
+        }
+    }
+
+    /*
+    public static bool ResetMergedMods()
+    {
+        if (FloodgateMergedInfo is not null)
+        {
+            FloodgateMergedInfo.Refresh();
+            if (FloodgateMergedInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            {
+                CustomLog.Log("Floodgate Merged Mods directory at " + FloodgateMergedPath + " is a symbolic link or junction. if this is intended by you, do NOT.");
+                FloodgateMergedInfo.Delete();
+                FloodgateMergedInfo.Create();
+            }
+            else
+            {
+                FloodgateMergedInfo.Delete(true);
+                FloodgateMergedInfo.Create();
+            }
+
+        }
+        return FloodgateMergedInfo is not null;
+    }
+    */
 }

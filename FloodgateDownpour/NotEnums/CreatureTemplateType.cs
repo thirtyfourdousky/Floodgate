@@ -47,8 +47,6 @@ public static class CreatureTemplateType
     public static readonly RegisteredCrit TintedBeetle = new RegisteredCrit();
     public static readonly RegisteredCrit SparkEye = new RegisteredCrit();
     public static readonly RegisteredCrit ScavengerSentinel = new RegisteredCrit();
-    public static readonly RegisteredCrit Xylo = new RegisteredCrit();
-    public static readonly RegisteredCrit XyloWorm = new RegisteredCrit();
 
     //Shrouded Assembly Code
     public static readonly RegisteredCrit Gecko = new RegisteredCrit();
@@ -111,8 +109,6 @@ public static class CreatureTemplateType
             ScavengerSentinel.Set("", 0);
             SparkEye.Set("", 0);
             TintedBeetle.Set("", 0);
-            Xylo.Set("", 0);
-            XyloWorm.Set("", 0);
 
             Teuthicada.Set("", 0);
 
@@ -180,8 +176,6 @@ public static class CreatureTemplateType
                 TintedBeetle.Set("TintedBeetle", 3);
                 WaterBlob.Set("WaterBlob", 2);
                 WaterSpitter.Set("WaterSpitter", 9);
-                Xylo.Set("Xylo", 4);
-                XyloWorm.Set("XyloWorm", 2);
 
 
                 _LBFly.Set("lbfly", 0); //just needs to not be empty. peak design, i know

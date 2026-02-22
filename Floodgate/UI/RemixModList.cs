@@ -12,8 +12,8 @@ namespace Floodgate.UI;
 public static class RemixModList
 {
     //this may not be that accurate
-    public static DateTime watcherRelease = new DateTime(2025, 9, 26);
-    public static TimeSpan elapsedTime => new DateTime(2025, 10, 16) - watcherRelease;
+    public static DateTime watcherRelease = new DateTime(2025, 12, 17);
+    public static TimeSpan elapsedTime => new DateTime(2025, 12, 27) - watcherRelease;
     //readonly, no need to assign twice
     public static readonly ConditionalWeakTable<MenuModList.ModButton, InfoDot> InfoDots = new();
 
@@ -106,8 +106,8 @@ public static class RemixModList
             if (SteamManager.Initialized && v.mod.workshopMod && Steam.Workshop.ModLastUpdatedDT.TryGetValue(v.mod.workshopId, out var lastUpdated))
             {
 
-                float timeDiff = Mathf.Clamp((float)((lastUpdated - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), 0, 1);
-                v.steamPixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff != 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
+                float timeDiff = Mathf.Clamp((float)((lastUpdated - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), -0.1f, 1);
+                v.steamPixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff >= 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
                 v.SteamDateAdded = true;
                 self.description += "\n" + lastUpdated.ToString("g");
             }
@@ -172,8 +172,8 @@ public static class RemixModList
                 string path = Path.Combine(mod.NewestPath, "plugins");
                 if (Directory.GetFiles(path).Length > 0)
                 {
-                    float timeDiff = Mathf.Clamp((float)((Directory.GetFiles(Path.Combine(mod.NewestPath, "plugins")).Max(File.GetCreationTimeUtc) - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), 0, 1);
-                    pixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff != 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
+                    float timeDiff = Mathf.Clamp((float)((Directory.GetFiles(Path.Combine(mod.NewestPath, "plugins")).Max(File.GetCreationTimeUtc) - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), -0.1f, 1);
+                    pixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff >= 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
                     goto FINISH;
                 }
             }
@@ -182,8 +182,8 @@ public static class RemixModList
                 string path = Path.Combine(mod.path, "plugins");
                 if (Directory.GetFiles(path).Length > 0)
                 {
-                    float timeDiff = Mathf.Clamp((float)((Directory.GetFiles(Path.Combine(mod.path, "plugins")).Max(File.GetCreationTimeUtc) - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), 0, 1);
-                    pixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff != 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
+                    float timeDiff = Mathf.Clamp((float)((Directory.GetFiles(Path.Combine(mod.path, "plugins")).Max(File.GetCreationTimeUtc) - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), -0.1f, 1);
+                    pixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff >= 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
                     goto FINISH;
                 }
             }
@@ -196,8 +196,8 @@ public static class RemixModList
             {
                 if(Steam.Workshop.ModLastUpdatedDT.TryGetValue(mod.workshopId, out var lastUpdated))
                 {
-                    float timeDiff = Mathf.Clamp((float)((lastUpdated - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), 0, 1);
-                    steamPixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff != 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
+                    float timeDiff = Mathf.Clamp((float)((lastUpdated - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), -0.1f, 1);
+                    steamPixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff >= 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
                     SteamDateAdded = true;
                 }
                 else

@@ -27,18 +27,19 @@ public class RemixInterface : OptionInterface
         int separator = 0;
         floodgateOptions.AddItems(
             new OpLabel(10, 540, "Floodgate", true) { alignment = FLabelAlignment.Left },
+            _lowBudgetModdedExperience = new(LowBudgetModdedExperience, a + c * separator), new OpLabel(b + c * separator++, new(300f, 24f), "Merge Modded Creatures"),
             _showWorkshopDate = new(ShowWorkshopDate, a + c * separator), new OpLabel(b + c * separator++, new(300f,24f), "Workshop Last Update")
         );
+        _lowBudgetModdedExperience.description = "Adds some modded creatures to your world";
 
         OpTab debug = new(this, "Debug");
         separator = 0;
         OpSimpleButton rescan;
         debug.AddItems(
             new OpLabel(10, 540, "Floodgate", true) { alignment = FLabelAlignment.Left },
-            _lowBudgetModdedExperience = new(LowBudgetModdedExperience, a + c * separator), new OpLabel(b + c * separator++, new(300f, 24f), "Merge Modded Creatures"),
-            rescan = new OpSimpleButton(b + c * separator++, new(300f, 24f), "Rescan Floodgate Paths")
+            rescan = new OpSimpleButton(b + c * separator++, new(300f, 24f), "Rescan Floodgate Paths")//,
+            //new OpLabel(b+c*separator, new(300f,24f), "File map: " + TurboAssetManager.DirectoryMap.Count + " - " + TurboAssetManager.UnmappedFiles.Count) { alignment = FLabelAlignment.Left }
             );
-        _lowBudgetModdedExperience.description = "Adds some modded creatures to your world";
         rescan.OnClick += Rescan_OnClick;
 
         Tabs = [floodgateOptions, debug];
@@ -46,7 +47,7 @@ public class RemixInterface : OptionInterface
 
     private void Rescan_OnClick(UIfocusable trigger)
     {
-        Registry.Rescan();
+        Registry.OpRescan();
         World.CustomMerger.Rescan();
     }
 }

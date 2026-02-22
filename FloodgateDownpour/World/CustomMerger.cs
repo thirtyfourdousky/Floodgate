@@ -19,11 +19,14 @@ public static class CustomMerger
 
     const string opREMOVE = "REMOVE"; //removes line that matches specified string
     const string opREMOVEALL = "REMOVEALL"; //removes all lines that contains the specified string
-    const string opREPLACE = "REPLACE"; //replace specific string by another, regex.replace
+    const string opREPLACEALL = "REPLACEALL"; //replace specific string by another, regex.replace
+    const string opREPLACE = "REPLACE"; // three parameter line, replaces a specific string under a line that matches the first parameter
     const string opMERGE = "MERGE"; //default, replaces rooms with new connections
 
     public static bool CRSpresent = false;
     public static System.Reflection.Assembly CRS;
+
+    public static readonly Dictionary<string, string> replacedRoomName = new();
 
     public static readonly Dictionary<string, List<string>> RegisteredPaths = new();
     private static bool applied = false;
@@ -54,6 +57,7 @@ public static class CustomMerger
         {
             ILProcessor processor = il.Body.GetILProcessor();
             Instruction ret = processor.Body.Instructions.LastOrDefault(i => i.OpCode == OpCodes.Ret).Previous;
+            //these are upside down. as opposed to watcher 1.10 and 1.11, map exporter doesn't exist
             processor.InsertAfter(ret, processor.Create(OpCodes.Call, processor.Import(typeof(CustomMerger).GetMethod("RealizeCustomMerge", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))));
             processor.InsertAfter(ret, processor.Create(OpCodes.Ldarg_0));
         }
@@ -93,6 +97,11 @@ public static class CustomMerger
     static string overridepath = "floodgate" + Path.DirectorySeparatorChar + "override" + Path.DirectorySeparatorChar;
     private static string WorldLoader_FindRoomFile(On.WorldLoader.orig_FindRoomFile orig, string roomName, bool includeRootDirectory, string additionalAppend)
     {
+        System.Threading.Tasks.Task<string> replacedRes = null;
+        System.Threading.Tasks.Task<string> replacedRes2 = null;
+        System.Threading.Tasks.Task<string> res;
+        System.Threading.Tasks.Task<string> res2;
+
         List<string> commonPaths = [
             "World" + Path.DirectorySeparatorChar + roomName.Split('_')[0] + "-Rooms" + Path.DirectorySeparatorChar,
             "World" + Path.DirectorySeparatorChar + "Gates" + Path.DirectorySeparatorChar,
@@ -103,38 +112,71 @@ public static class CustomMerger
         {
             commonPaths.Add("Levels" + Path.DirectorySeparatorChar + "Challenges" + Path.DirectorySeparatorChar);
         }
-        string path;
-        foreach (string hint in commonPaths)
+
+        if (replacedRoomName.TryGetValue(roomName, out var replacedName))
         {
-            path = AssetManager.ResolveFilePath(overridepath + hint + roomName + additionalAppend);
-            if (File.Exists(path))
+            replacedRes = System.Threading.Tasks.Task<string>.Factory.StartNew(() =>
             {
-                Plugin.logger.LogDebug("Loaded Floodgate Room file " + roomName + "\n  - " + path);
-                return includeRootDirectory ? "file:///" + path : path;
-            }
+                string replacedPath;
+                foreach (string hint in commonPaths)
+                {
+                    replacedPath = AssetManager.ResolveFilePath(overridepath + hint + replacedName + additionalAppend);
+                    if (File.Exists(replacedPath))
+                    {
+                        return includeRootDirectory ? "file:///" + replacedPath : replacedPath;
+                    }
+                }
+                return null;
+            });
+            replacedRes2 = System.Threading.Tasks.Task.Factory.StartNew(() =>
+            {
+                return orig(replacedName, includeRootDirectory, additionalAppend);
+            });
         }
-        return orig(roomName, includeRootDirectory, additionalAppend);
+        res = System.Threading.Tasks.Task<string>.Factory.StartNew(() =>
+        {
+            string path;
+            foreach (string hint in commonPaths)
+            {
+                path = AssetManager.ResolveFilePath(overridepath + hint + roomName + additionalAppend);
+                if (File.Exists(path))
+                {
+                    return includeRootDirectory ? "file:///" + path : path;
+                }
+            }
+            return null;
+        });
+        res2 = System.Threading.Tasks.Task<string>.Factory.StartNew(() =>
+        {
+            return orig(roomName, includeRootDirectory, additionalAppend);
+        });
+
+        return (replacedRes is not null ? replacedRes.GetAwaiter().GetResult() ?? replacedRes2.GetAwaiter().GetResult() : null) ?? res.GetAwaiter().GetResult() ?? res2.GetAwaiter().GetResult();
     }
     public static void RealizeCustomMerge(WorldLoader self)
     {
+        replacedRoomName.Clear();
         List<string> fallback = [.. self.lines];
         bool error = false;
+        bool skippedMerging = false;
         try
         {
-            if (self.game.IsArenaSession || self.game.session is SandboxGameSession)
+            if (self.game != null && (self.game.IsArenaSession || self.game.session is SandboxGameSession))
             {
                 return;
             }
+            if (self.game == null) FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] current game is null, possible baking process");
             string worldName = self.worldName;
             string playerCharacter = self.playerCharacter == null ? "_null" : self.playerCharacter.value;
             if (!RegisteredPaths.ContainsKey(worldName.ToUpperInvariant()))
             {
                 FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] Loading region " + worldName + "\n  Current slugcat: " + playerCharacter);
+                skippedMerging = true;
                 goto LOWBUDGETMODDEDEXPERIENCE;
             }
 
             Plugin.logger.LogDebug("Trying to load Custom merging for " + worldName);
-            FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] Loading custom merge for " + worldName + "\n  Current slugcat: " + playerCharacter);
+            FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] Loading custom merge for " + worldName + "\n  Current slugcat: " + playerCharacter + "\n  Current timeline: ");
             CustomLines current = new(self.lines);
             CustomLines mLines = new(RegisteredPaths[worldName.ToUpperInvariant()], playerCharacter);
             FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] Lines Loaded:\n" + string.Join("\n  ", mLines.Lines));
@@ -142,13 +184,17 @@ public static class CustomMerger
             foreach (string mLine in mLines.conditionallinks)
             {
                 CustomLine merge = mLine;
-                if (merge.operand == opMERGE || string.IsNullOrWhiteSpace(merge.operand))
+                merge.line = merge.line.Replace("%SLUGCAT%", playerCharacter);
+                if (!string.IsNullOrWhiteSpace(merge.line))
                 {
-                    current.conditionallinks.Add(merge.line);
-                }
-                else
-                {
-                    DoOperation(ref current.conditionallinks, mLine);
+                    if (merge.operand == opMERGE || string.IsNullOrWhiteSpace(merge.operand))
+                    {
+                        current.conditionallinks.Add(merge.line);
+                    }
+                    else
+                    {
+                        DoOperation(ref current.conditionallinks, mLine);
+                    }
                 }
             }
 
@@ -178,18 +224,27 @@ public static class CustomMerger
             }
             else
             {
-                FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] World Lines Result:\n" + string.Join("\n  ", self.lines));
+                if (skippedMerging)
+                {
+                    //something else
+                }
+                else
+                {
+                    FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] World Lines Result:\n" + string.Join("\n  ", self.lines));
+                }
             }
         }
 
     //low budget modded experience
     LOWBUDGETMODDEDEXPERIENCE:
+        bool moddedcritskip = false;
         if (!Plugin.RemixOptions.LowBudgetModdedExperience.Value)
         {
-            return;
+            moddedcritskip = true;
+            goto REPLACEROOMSTUFF;
         }
         error = false;
-        fallback = [.. self.lines]; //malpractice, doing it twice
+        fallback = [.. self.lines]; //bad practice, doing it twice
         try
         {
             CustomLines current = new(self.lines);
@@ -209,37 +264,95 @@ public static class CustomMerger
         }
         finally
         {
-            if (error)
+            if (!moddedcritskip)
             {
-                FloodgatePatcher.CustomLog.LogError("[Floodgate \"\"Modded Creatures\"\"] Reverting modded creatures");
+                if (error)
+                {
+                    FloodgatePatcher.CustomLog.LogError("[Floodgate \"\"Modded Creatures\"\"] Reverting modded creatures");
+                }
+                else
+                {
+                    FloodgatePatcher.CustomLog.Log("[Floodgate \"\"Modded Creatures\"\"] Modded Spawns Result:\n" + string.Join("\n  ", (self.lines.GetRange(self.lines.IndexOf(wrdCRIT) + 1, self.lines.IndexOf("END " + wrdCRIT) - self.lines.IndexOf(wrdCRIT) - 1))));
+                }
             }
-            else
+        }
+    //this exists due to the game loading the original settings file over the replaceroom file
+    REPLACEROOMSTUFF:
+        try
+        {
+            CustomLines current = new(self.lines);
+            string playerCharacter = self.playerCharacter == null ? "_null" : self.playerCharacter.value;
+            for (int i = 0; i < current.conditionallinks.Count; i++)
             {
-                FloodgatePatcher.CustomLog.Log("[Floodgate \"\"Modded Creatures\"\"] Modded Spawns Result:\n" + string.Join("\n  ", (self.lines.GetRange(self.lines.IndexOf(wrdCRIT) + 1, self.lines.IndexOf("END " + wrdCRIT) - self.lines.IndexOf(wrdCRIT) - 1))));
+                string[] reproomline;
+                if ((reproomline = current.conditionallinks[i].Split([ " : " ], StringSplitOptions.None)).Length == 4 && reproomline[1] == "REPLACEROOM")
+                {
+                    if (reproomline[0].Split(',').Contains(playerCharacter))
+                    {
+                        replacedRoomName[reproomline[2]] = reproomline[3];
+                        FloodgatePatcher.CustomLog.Log("[Floodgate World Loader] Registering replaced room\n    " + reproomline[2] + " => " + reproomline[3]);
+                    }
+                }
             }
+        }
+        catch (Exception e)
+        {
+            FloodgatePatcher.CustomLog.LogError("[Floodgate World Loader]\n    " + e.ToString());
         }
     }
 
     public static void DoOperation(ref List<string> lines, CustomLine merge)
     {
+        if (string.IsNullOrWhiteSpace(merge.line))
+        {
+            FloodgatePatcher.CustomLog.Log("[World Loader] line is empty\n["+merge.operand+"]"+merge.line);
+            lines = lines.Distinct().ToList();
+            return;
+        }
+        FloodgatePatcher.CustomLog.Log("[World Loader] doing operation [" + merge.operand + "] with line " + merge.line);
         if (merge.operand == opREMOVE)
         {
+            FloodgatePatcher.CustomLog.Log("[World Loader] removing line " + merge.line);
             lines.RemoveAll(i => i == merge.line);
         }
         else if (merge.operand == opREMOVEALL)
         {
+            FloodgatePatcher.CustomLog.Log("[World Loader] removing all lines that contains " + merge.line);
             lines.RemoveAll(i => i.Contains(merge.line));
         }
         else if (merge.operand == opREPLACE)
         {
-            string[] sub = merge.line.Split([" : "], StringSplitOptions.None);
+            int i = 0;
+            string[] parameters = merge.line.Split([" :;: "], StringSplitOptions.None);
+            if (parameters.Length == 3)
+            {
+                for (; i < lines.Count; i++)
+                {
+                    if (lines[i].StartsWith(parameters[0]))
+                    {
+                        FloodgatePatcher.CustomLog.Log("[World Loader] replacing occurrence\n" + parameters[1] + "  =>  " + parameters[2] + "\n on line:\n" + lines[i]);
+                        lines[i] = lines[i].Replace(parameters[1], parameters[2]);
+                        FloodgatePatcher.CustomLog.Log("Result:\n" +  lines[i]);
+                    }
+                }
+            }
+        }
+        else if (merge.operand == opREPLACEALL)
+        {
+            string[] sub = merge.line.Split([" :;: "], StringSplitOptions.None);
             for (int i = 0; sub.Length == 2 && i < lines.Count; i++)
             {
+                FloodgatePatcher.CustomLog.Log("[World Loader] replacing occurrence " + sub[0] + " with " + sub[1] + " in line:\n" + lines[i]);
                 lines[i] = lines[i].Replace(sub[0], sub[1]);
             }
         }
         else if (merge.operand == opMERGE || string.IsNullOrWhiteSpace(merge.operand))
         {
+            if(merge.line.Contains("LINEAGE :"))
+            {
+                lines.Add(merge.line);
+                return;
+            }
             string pattern = merge.line.Split(':')[0] + ":";
             if (lines.Any(i => i.StartsWith(pattern)))
             {
@@ -301,7 +414,7 @@ public static class CustomMerger
                         if (slugcats.Length > 0)
                         {
                             List<string> pSlugcats = slugcats.Where(i => !i.StartsWith("!")).ToList();
-                            if (pSlugcats.Count > 0 && (!pSlugcats.Contains(characterName)))
+                            if (pSlugcats.Count > 0 && !(pSlugcats.Contains(characterName)))
                             {
                                 continue;
                             }
@@ -418,6 +531,11 @@ public static class CustomMerger
             if (line.Contains("[") && line.Contains("]"))
             {
                 return new(line.trimStart(']'), line.trimEnd(']').trimStart('['));
+            }
+            else if (line.Contains("[") ^ line.Contains("]"))
+            {
+                FloodgatePatcher.CustomLog.Log("line error\n" + line + "\nline contains unclosing operand");
+                return "";
             }
             else
             {

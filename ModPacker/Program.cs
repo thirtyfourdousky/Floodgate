@@ -33,20 +33,32 @@ public static class Program
         PathM.BulkCopy(Path.Combine(solutionPath, "FloodgateDownpour", "bin", "Debug", "Floodgate.dll"),
             "plugins",
             Path.Combine("v1.9.15b", "plugins"));
-        PathM.BulkCopy(Path.Combine(solutionPath, "Modules", "FG-LBspecificDownpour", "bin", "Debug", "FGLBspecific.fdll"),
-            Path.Combine("modules", "v1.9.15b"),
-            Path.Combine("modules", "older"));
         
         //1.10 && 1.11
         PathM.BulkCopy(Path.Combine(solutionPath, "Floodgate", "bin", "Debug", "Floodgate.dll"),
             Path.Combine("newest", "plugins"),
             Path.Combine("v1.10.4", "plugins"));
-        PathM.BulkCopy(Path.Combine(solutionPath, "Modules", "FG-LBspecific", "bin", "Debug", "FGLBspecific.fdll"),
-            Path.Combine("modules", "v1.10.4"),
-            Path.Combine("modules", "newest"));
 
         //patcher needs to be in ALL versioned paths
         PathM.BulkCopy(Path.Combine(solutionPath, "FloodgatePatcher", "bin", "Debug", "FloodgatePatcher.dll"),
+            "patchers",
+            Path.Combine("v1.9.15b", "patchers"),
+            Path.Combine("v1.10.4", "patchers"),
+            Path.Combine("newest", "patchers"));
+
+        //pdb
+        //1.9.15b
+        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgateDownpour", "bin", "Debug", "Floodgate.pdb"),
+            "plugins",
+            Path.Combine("v1.9.15b", "plugins"));
+        
+        //1.10 && 1.11
+        PathM.BulkCopy(Path.Combine(solutionPath, "Floodgate", "bin", "Debug", "Floodgate.pdb"),
+            Path.Combine("newest", "plugins"),
+            Path.Combine("v1.10.4", "plugins"));
+
+        //patcher needs to be in ALL versioned paths
+        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgatePatcher", "bin", "Debug", "FloodgatePatcher.pdb"),
             "patchers",
             Path.Combine("v1.9.15b", "patchers"),
             Path.Combine("v1.10.4", "patchers"),
@@ -65,9 +77,6 @@ public static class PathM
             {
                 Console.WriteLine("Copying " + filepath + " to " + Path.Combine(Program.path, dest));
                 FileInfo info = new(filepath);
-                File.Copy(filepath, Path.Combine(Program.path, dest, info.Name), true);
-                filepath = Path.Combine(info.Directory.FullName, info.Name.Split('.')[0] + ".pdb");
-                info = new FileInfo(filepath);
                 File.Copy(filepath, Path.Combine(Program.path, dest, info.Name), true);
                 Console.WriteLine("Copied " + filepath + " to " + Path.Combine(Program.path, dest));
             }catch (Exception ex) { Console.WriteLine(ex.ToString()); Environment.Exit(0); }

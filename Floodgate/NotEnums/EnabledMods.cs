@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static FGTools;
 
 namespace Floodgate.NotEnums;
 
 public static class EnabledMods
 {
+    public static bool Slugbase { get; internal set; } = false;
     public static bool LBmergedMods { get; internal set; } = false;
     public static bool ShroudedAssemblySpecific {  get; internal set; } = false;
     public static bool LuminousCode {  get; internal set; } = false;
@@ -17,6 +14,7 @@ public static class EnabledMods
 
     public static void Apply()
     {
+        Slugbase = IsModActive("slime-cubed.slugbase");
         LuminousCode = IsModActive("sequoia.luminouscode");
         SnootShootNoot = IsModActive("myr.moss_fields");
         Scroungers = IsModActive("shrimb.scroungers");
@@ -25,8 +23,8 @@ public static class EnabledMods
         Vanguard = IsModActive("pkuyo.thevanguard");
     }
 
-    public static bool IsModActive(string ID)
+    /*public static bool IsModActive(string ID)
     {
         return (ModManager.ActiveMods.Any(i => i.id == ID));
-    }
+    }*/
 }

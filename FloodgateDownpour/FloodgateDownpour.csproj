@@ -46,6 +46,9 @@
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
+    <Reference Include="LBMergedMods">
+      <HintPath>..\..\..\RainWorld\workshopLinks\M4rblelousEntityPack\v1.9.15b\plugins\LBMergedMods.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\Mono.Cecil.dll</HintPath>
     </Reference>
@@ -79,6 +82,7 @@
     <Compile Include="ExHooks\HookManager.cs" />
     <Compile Include="FG_Expedition\CreatureMergerTools.cs" />
     <Compile Include="ExTools.cs" />
+    <Compile Include="ModCompat\LBspecific.cs" />
     <Compile Include="NotEnums\CreatureTemplateType.cs" />
     <Compile Include="NotEnums\EnabledMods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

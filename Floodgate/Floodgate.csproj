@@ -38,9 +38,21 @@
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
+    <Reference Include="CustomRegionsSupport">
+      <HintPath>..\..\..\RainWorld\public\CustomRegionsSupport.dll</HintPath>
+    </Reference>
+    <Reference Include="FieldTrip">
+      <HintPath>..\..\..\RainWorld\workshopLinks\SlugpupSafari\newest\plugins\FieldTrip.dll</HintPath>
+    </Reference>
     <Reference Include="HOOKS-Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\HOOKS-Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LBMergedMods">
+      <HintPath>..\..\..\RainWorld\workshopLinks\M4rblelousEntityPack\newest\plugins\LBMergedMods.dll</HintPath>
+    </Reference>
+    <Reference Include="Lunacy">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2930814260\newest\plugins\Lunacy.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\Mono.Cecil.dll</HintPath>
@@ -57,6 +69,12 @@
     <Reference Include="PUBLIC-Assembly-CSharp">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\utils\PUBLIC-Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="RegionKit">
+      <HintPath>..\..\PublicDLL\RegionKit.dll</HintPath>
+    </Reference>
+    <Reference Include="SprobBanana">
+      <HintPath>..\..\..\RainWorld\workshopLinks\NotSlugcatPlayables\plugins\SprobBanana.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -72,20 +90,41 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
+    <Reference Include="WDTGG">
+      <HintPath>..\..\References\WDTGG.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\LoopException.cs" />
     <Compile Include="ExHooks\HookManager.cs" />
     <Compile Include="FG_Expedition\CreatureMergerTools.cs" />
     <Compile Include="ExTools.cs" />
+    <Compile Include="ModCompat\LBspecific.cs" />
+    <Compile Include="ModCompat\Lunacy\CustomTokens\LunacyTokens.cs" />
+    <Compile Include="ModCompat\NotScugPlaySpupSafari.cs" />
+    <Compile Include="ModCompat\RegionKit\BackgroundBuilder_Data.cs" />
+    <Compile Include="ModCompat\WDTGG.cs" />
+    <Compile Include="ModCompat\_UnRegEx.cs" />
     <Compile Include="NotEnums\CreatureTemplateType.cs" />
     <Compile Include="NotEnums\EnabledMods.cs" />
+    <Compile Include="World\Optimization.cs" />
+    <Compile Include="_Modules\DevTools\Objects\ObjectsMenu.cs" />
+    <Compile Include="_Modules\ExtendedEchoExtender\EchoSettings.cs" />
+    <Compile Include="_Modules\ExtendedEchoExtender\EEEGhostConversation.cs" />
+    <Compile Include="_Modules\ExtendedEchoExtender\EEEGhostWorldPresence.cs" />
+    <Compile Include="_Modules\ExtendedEchoExtender\Registry.cs" />
+    <Compile Include="_Modules\ExtendedEchoExtender\EEEGhost.cs" />
+    <Compile Include="_Modules\ExtendedEchoExtender\Enums.cs" />
+    <Compile Include="_Modules\ExtendedEchoExtender\Hooks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pugin.cs" />
     <Compile Include="Registry.cs" />
     <Compile Include="RemixInterface.cs" />
     <Compile Include="Steam\Workshop.cs" />
+    <Compile Include="Tools.cs" />
+    <Compile Include="TurboAssetManager.cs" />
     <Compile Include="UI\RemixModList.cs" />
+    <Compile Include="UnRegEx.cs" />
     <Compile Include="World\CustomMerger.cs" />
   </ItemGroup>
   <ItemGroup>

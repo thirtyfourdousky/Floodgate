@@ -1,5 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FloodgatePatcher;
+using System;
 using System.IO;
 
 namespace Floodgate;
@@ -9,7 +11,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.0.1";
+    public const string Version = "0.1.12";
 
     public static Plugin? Instance { get; private set; }
 
@@ -79,6 +81,17 @@ public class Plugin : BaseUnityPlugin
     bool onmodsinit = false;
     private void RainWorld_OnModsInit(On.RainWorld.orig_OnModsInit orig, RainWorld self)
     {
+        if (NotEnums.EnabledMods.IsModActive("lb-fgf-m4r-ik.modpack"))
+        {
+            try
+            {
+                ModCompat.LBspecific.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("M4rblelous Entity Pack specific apply failed\n" + e.ToString());
+            }
+        }
         orig(self);
         if (onmodsinit)
         {
@@ -106,35 +119,8 @@ public class Plugin : BaseUnityPlugin
         {
             return;
         }
-        if (NotEnums.EnabledMods.LBmergedMods)
-        {
-            bool error = false;
-            System.Reflection.Assembly? FGLBspecific = null;
-            try
-            {
-                string version = FloodgatePatcher.ModLoader.IsLatest ? "newest" : FloodgatePatcher.ModLoader.CurrentVersion;
-                if (!Directory.Exists(Path.Combine(FloodgatePatcher.ModLoader.FloodgatePath, "modules", version)))
-                {
-                    version = "older";
-                }
-                FGLBspecific = System.Reflection.Assembly.LoadFile(Path.Combine(FloodgatePatcher.ModLoader.FloodgatePath, "modules", version, "FGLBspecific.fdll"));
-            }
-            catch(System.Exception e)
-            {
-                error = true;
-                FloodgatePatcher.CustomLog.LogError(e.ToString());
-            }
-            finally
-            {
-                if (!error && FGLBspecific != null)
-                {
-                    FGLBspecific.GetType("FGLBspecific.LBspecific", false).GetMethod("Apply", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-                        .Invoke(null, null);
-                }
-            }
-        }
         postmodsinit = true;
-        World.CustomMerger.Apply();
+        //World.CustomMerger.Apply();
         FG_Expedition.CreatureMergerTools.Apply();
         Registry.Apply();
         UI.RemixModList.Apply();

@@ -9,10 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloodgatePatcher", "Floodga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloodgateDownpour", "FloodgateDownpour\FloodgateDownpour.csproj", "{FE7F96AB-8902-BA41-4C77-B7084A43AC96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLBspecific", "Modules\FG-LBspecific\FGLBspecific.csproj", "{A8347673-1F68-4A26-A981-10112CB046E1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLBspecificDownpour", "Modules\FG-LBspecificDownpour\FGLBspecificDownpour.csproj", "{A8CB11DE-9D49-29F5-16B3-15C01479F8D1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModPacker", "ModPacker\ModPacker.csproj", "{DC3B4DB9-9431-4FC8-AC71-D18A5F7BD8F2}"
 EndProject
 Global
@@ -33,14 +29,6 @@ Global
 		{FE7F96AB-8902-BA41-4C77-B7084A43AC96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE7F96AB-8902-BA41-4C77-B7084A43AC96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE7F96AB-8902-BA41-4C77-B7084A43AC96}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8347673-1F68-4A26-A981-10112CB046E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8347673-1F68-4A26-A981-10112CB046E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8347673-1F68-4A26-A981-10112CB046E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8347673-1F68-4A26-A981-10112CB046E1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8CB11DE-9D49-29F5-16B3-15C01479F8D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8CB11DE-9D49-29F5-16B3-15C01479F8D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8CB11DE-9D49-29F5-16B3-15C01479F8D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8CB11DE-9D49-29F5-16B3-15C01479F8D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC3B4DB9-9431-4FC8-AC71-D18A5F7BD8F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC3B4DB9-9431-4FC8-AC71-D18A5F7BD8F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC3B4DB9-9431-4FC8-AC71-D18A5F7BD8F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
