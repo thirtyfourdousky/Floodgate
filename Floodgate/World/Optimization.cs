@@ -14,13 +14,35 @@ public static class Optimization
     public static volatile WorldLoader.LoadingContext lastLoadingContext = null;
     public static void Apply()
     {
+        IL.Region.ctor_string_int_int_RainWorldGame_Timeline += Region_ctor_string_int_int_RainWorldGame_Timeline;
         IL.WorldLoader.NextActivity += WorldLoader_NextActivity;
         IL.WorldLoader.CreatingAbstractRooms += WorldLoader_CreatingAbstractRooms;
         IL.Watcher.WarpMap.TryGoToRegionMap += WarpMap_TryGoToRegionMap;
         On.WorldLoader.CreatingWorld += WorldLoader_CreatingWorld;
         On.WorldLoader.ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues += WorldLoader_ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues;
         On.WorldLoader.ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues_LoadingContext += WorldLoader_ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues_LoadingContext;
-        On.Region.ReloadRoomSettingsTemplate += Region_ReloadRoomSettingsTemplate;
+        //On.Region.ReloadRoomSettingsTemplate += Region_ReloadRoomSettingsTemplate;
+    }
+
+    private static void Region_ctor_string_int_int_RainWorldGame_Timeline(ILContext il)
+    {
+        try
+        {
+            ILCursor c = new(il);
+            if (c.TryGotoNext(MoveType.After, x => x.MatchLdloc(10) && x.Next.MatchLdstr("Room Setting Templates")))
+            {
+                c.RemoveRange(2);
+                c.EmitDelegate((string load) => { return lastLoadingContext != WARPMAPLOADING && load == "Room Setting Templates"; });
+            }
+            else
+            {
+                CustomLog.LogError("[Warp Map optimization] IL Region Ctor couldn't find injection point" + delegate () { c.Goto(0); return c.ToString(); });
+            }
+        }
+        catch (Exception ex)
+        {
+            CustomLog.LogError("[Warp Map optimization] IL Region Ctor fucking failed\n" + ex.ToString());
+        }
     }
 
     private static void WorldLoader_NextActivity(ILContext il)
@@ -162,6 +184,7 @@ public static class Optimization
     {
         if (lastLoadingContext == WARPMAPLOADING)
         {
+
             return;
         }
         orig(self,templateName);

@@ -51,10 +51,18 @@ public static class Registry
     }
     public static void Merge()
     {
-        if(FloodgatePatcher.ModLoader.FloodgateMergedInfo is null || !FloodgatePatcher.ModLoader.FloodgateMergedInfo.Exists)
+        if(FloodgatePatcher.ModLoader.FloodgateMergedInfo is null)
         {
             return;
         }
+        if(!FloodgatePatcher.ModLoader.FloodgateMergedInfo.Exists || !string.Equals(FloodgatePatcher.ModLoader.FloodgateMergedInfo.Name, "FloodgateMergedMods", StringComparison.OrdinalIgnoreCase) || !string.Equals(FloodgatePatcher.ModLoader.FloodgateMergedInfo.Parent.Name, "StreamingAssets", StringComparison.OrdinalIgnoreCase))
+        {
+            FloodgatePatcher.CustomLog.Log("[File Merging] Floodgate's merged folder could not be found for some reason");
+            FloodgatePatcher.ModLoader.FloodgateMergedInfo = null;
+            return;
+        }
+        System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
         List<string> merged = new();
         List<string> mergedfiles = new();
         foreach(RegisteredMod mod in Mods)
@@ -159,6 +167,8 @@ public static class Registry
         handledpaths.Clear();
 
         TurboAssetManager.accessfgmerged = true;
+        sw.Stop();
+        FloodgatePatcher.CustomLog.Log("[File Merging] Took " + sw.ElapsedMilliseconds + "ms");
     }
     public static readonly HashSet<string> handledpaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     public static void MergeCopy(string path, string trimm)
@@ -208,7 +218,8 @@ public static class Registry
                         File.Copy(file, destination, true);
                     }
                     handledpaths.Add(destination);
-                }catch (System.Exception ex)
+                }
+                catch (System.Exception ex)
                 {
                     FloodgatePatcher.CustomLog.LogError("[File Merging] Error overriding file " + file + " to " + destination + "\n" + ex.ToString());
                 }
@@ -225,7 +236,7 @@ public static class Registry
             return true;
         }
 
-        if(source.Length  == destination.Length)
+        if(source.Length == destination.Length && source.LastWriteTime == destination.LastWriteTime)
         {
             return false;
         }
@@ -236,7 +247,7 @@ public static class Registry
         {
             sourcehash = string.Join("", sourcesha.ComputeHash(sourcefs).Select(x => x.ToString("x2")));
         }
-        using (FileStream destfs = File.OpenRead(path))
+        using (FileStream destfs = File.OpenRead(target))
         using (SHA512 destsha = SHA512.Create())
         {
             desthash = string.Join("", destsha.ComputeHash(destfs).Select(x => x.ToString("x2")));

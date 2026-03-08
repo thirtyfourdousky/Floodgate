@@ -48,7 +48,7 @@ public static class FGTools
             if (trimmedline.Length >= 1 && trimmedline[0] == '(' && trimmedline.Contains(')'))
             {
                 string text = trimmedline.Substring(1, trimmedline.IndexOf(")") - 1);
-                trimmedline = ((!(StringMatchesTimeline(text, slug) || StringMatchesTimeline(text,timeline)) ? remove : trimmedline.Substring(trimmedline.IndexOf(")") + 1)));
+                lines[i] = ((!(StringMatchesTimeline(text, slug) || StringMatchesTimeline(text,timeline)) ? remove : trimmedline.Substring(trimmedline.IndexOf(")") + 1)));
             }
         }
         return lines.Where((string x) => x != remove).ToArray();

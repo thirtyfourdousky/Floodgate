@@ -16,7 +16,7 @@ public struct EchoSettings
     public int MinKarmaCap;
     public PrimingType Priming;
     public string Song;
-    public bool SpawnOnDifficulty = true;
+    public bool SpawnOnDifficulty = false;
     public float Flip;
     public string ID;
     public string Region;
@@ -38,7 +38,7 @@ public struct EchoSettings
         MinKarmaCap = 0;
         Priming = ((name == SlugcatStats.Name.Red) ? PrimingType.None : ((name == MoreSlugcats.MoreSlugcatsEnums.SlugcatStatsName.Saint) ? PrimingType.Saint : PrimingType.Regular));
         Song = "NA_32 - Else1";
-        SpawnOnDifficulty = true;
+        SpawnOnDifficulty = false;
         Flip = 0f;
         ID = "NoGhost";
         Region = "isurehopethisisntaregion";

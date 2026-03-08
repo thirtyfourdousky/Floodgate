@@ -99,6 +99,7 @@
     <Compile Include="ExHooks\HookManager.cs" />
     <Compile Include="FG_Expedition\CreatureMergerTools.cs" />
     <Compile Include="ExTools.cs" />
+    <Compile Include="ModCompat\CRS\IndexedEntranceClass.cs" />
     <Compile Include="ModCompat\LBspecific.cs" />
     <Compile Include="ModCompat\Lunacy\CustomTokens\LunacyTokens.cs" />
     <Compile Include="ModCompat\NotScugPlaySpupSafari.cs" />

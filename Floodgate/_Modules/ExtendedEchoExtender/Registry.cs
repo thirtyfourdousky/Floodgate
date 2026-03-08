@@ -163,10 +163,14 @@ public static class Registry
                 {
                     string[] conds = line.Split(':');
                     bool negative = conds[1].StartsWith("x-");
-                    if (!(conds[1].Substring(negative?2:0).Split(',').Contains(name.value.ToLowerInvariant()) ^ negative))
+                    if (conds[1].Substring(negative?2:0).Split(',').Contains(name.value.ToLowerInvariant()) ^ negative)
                     {
-                        current.SpawnOnDifficulty = false;
+                        current.SpawnOnDifficulty = true;
                     }
+                }
+                else
+                {
+                    current.SpawnOnDifficulty = true;
                 }
                 continue;
             }

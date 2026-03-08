@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using static Menu.Remix.MenuModList.ModButton;
 
 namespace Floodgate.UI;
 
@@ -122,6 +123,10 @@ public static class RemixModList
     private static void ModButton_ctor(On.Menu.Remix.MenuModList.ModButton.orig_ctor orig, MenuModList.ModButton self, MenuModList list, int index)
     {
         orig(self, list, index);
+        if (string.Equals(self.text, "floodgate", StringComparison.OrdinalIgnoreCase) && UnityEngine.Random.value > 0.9)
+        {
+            self.text = "Floodgayt";
+        }
         InfoDots.Add(self, new(self, list));
     }
 

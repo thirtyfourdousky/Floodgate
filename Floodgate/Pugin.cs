@@ -16,7 +16,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.13";
+    public const string Version = "0.1.16";
 
     public static Plugin? Instance { get; private set; }
 
@@ -157,6 +157,17 @@ public partial class Plugin : BaseUnityPlugin
             catch (Exception e)
             {
                 CustomLog.LogError("Lunacy specific apply failed\n" + e.ToString());
+            }
+        }
+        if (FGTools.IsModActive("crs"))
+        {
+            try
+            {
+                ModCompat.CRS.IndexedEntranceClass.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("CRS specific apply failed\n" + e.ToString());
             }
         }
         //before orig
