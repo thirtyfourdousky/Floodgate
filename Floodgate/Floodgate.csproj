@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BeeWorld">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2939738770\newest\plugins\BeeWorld.dll</HintPath>
+    </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
@@ -52,10 +55,16 @@
       <HintPath>..\..\..\RainWorld\workshopLinks\M4rblelousEntityPack\newest\plugins\LBMergedMods.dll</HintPath>
     </Reference>
     <Reference Include="Lunacy">
-      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2930814260\newest\plugins\Lunacy.dll</HintPath>
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2930814260\plugins\Lunacy.dll</HintPath>
+    </Reference>
+    <Reference Include="MergeFix">
+      <HintPath>..\..\..\RainWorld\public\MergeFix.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
     <Reference Include="MonoMod">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\MonoMod.dll</HintPath>
@@ -68,6 +77,12 @@
     </Reference>
     <Reference Include="PUBLIC-Assembly-CSharp">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\utils\PUBLIC-Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PublicEmgTx">
+      <HintPath>..\..\..\RainWorld\PublicEmgTx.dll</HintPath>
+    </Reference>
+    <Reference Include="PublicIteratorCreator">
+      <HintPath>..\..\..\RainWorld\PublicIteratorCreator.dll</HintPath>
     </Reference>
     <Reference Include="RegionKit">
       <HintPath>..\..\PublicDLL\RegionKit.dll</HintPath>
@@ -99,15 +114,21 @@
     <Compile Include="ExHooks\HookManager.cs" />
     <Compile Include="FG_Expedition\CreatureMergerTools.cs" />
     <Compile Include="ExTools.cs" />
+    <Compile Include="ModCompat\beecat.cs" />
     <Compile Include="ModCompat\CRS\IndexedEntranceClass.cs" />
+    <Compile Include="ModCompat\EmgTxIteratorCreator.cs" />
     <Compile Include="ModCompat\LBspecific.cs" />
     <Compile Include="ModCompat\Lunacy\CustomTokens\LunacyTokens.cs" />
     <Compile Include="ModCompat\NotScugPlaySpupSafari.cs" />
     <Compile Include="ModCompat\RegionKit\BackgroundBuilder_Data.cs" />
+    <Compile Include="ModCompat\RegionKit\RegionKitApply.cs" />
+    <Compile Include="ModCompat\RegionKit\TurboBakerStuff.cs" />
     <Compile Include="ModCompat\WDTGG.cs" />
     <Compile Include="ModCompat\_UnRegEx.cs" />
     <Compile Include="NotEnums\CreatureTemplateType.cs" />
     <Compile Include="NotEnums\EnabledMods.cs" />
+    <Compile Include="World\Map.cs" />
+    <Compile Include="World\MergeFixMap.cs" />
     <Compile Include="World\Optimization.cs" />
     <Compile Include="_Modules\DevTools\Objects\ObjectsMenu.cs" />
     <Compile Include="_Modules\ExtendedEchoExtender\EchoSettings.cs" />

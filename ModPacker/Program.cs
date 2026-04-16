@@ -38,6 +38,10 @@ public static class Program
         PathM.BulkCopy(Path.Combine(solutionPath, "Floodgate", "bin", "Debug", "Floodgate.dll"),
             Path.Combine("newest", "plugins"),
             Path.Combine("v1.10.4", "plugins"));
+        //Extra
+        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgateExtra", "bin", "Debug", "FloodgateExtra.dll"),
+            Path.Combine("newest", "plugins"),
+            Path.Combine("v1.10.4", "plugins"));
 
         //patcher needs to be in ALL versioned paths
         PathM.BulkCopy(Path.Combine(solutionPath, "FloodgatePatcher", "bin", "Debug", "FloodgatePatcher.dll"),
@@ -54,6 +58,10 @@ public static class Program
         
         //1.10 && 1.11
         PathM.BulkCopy(Path.Combine(solutionPath, "Floodgate", "bin", "Debug", "Floodgate.pdb"),
+            Path.Combine("newest", "plugins"),
+            Path.Combine("v1.10.4", "plugins"));
+        //Extra
+        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgateExtra", "bin", "Debug", "FloodgateExtra.pdb"),
             Path.Combine("newest", "plugins"),
             Path.Combine("v1.10.4", "plugins"));
 

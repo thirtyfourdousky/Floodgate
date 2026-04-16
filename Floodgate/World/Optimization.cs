@@ -36,7 +36,7 @@ public static class Optimization
             }
             else
             {
-                CustomLog.LogError("[Warp Map optimization] IL Region Ctor couldn't find injection point" + delegate () { c.Goto(0); return c.ToString(); });
+                CustomLog.LogError("[Warp Map optimization] IL Region Ctor couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -63,7 +63,7 @@ public static class Optimization
             }
             else
             {
-                CustomLog.LogError("[Warp Map optimization] IL NextActivity couldn't find injection point" + delegate () { c.Goto(0); return c.ToString(); });
+                CustomLog.LogError("[Warp Map optimization] IL NextActivity couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -90,7 +90,7 @@ public static class Optimization
             }
             else
             {
-                CustomLog.LogError("[Warp Map optimization] IL CreatingAbstractRooms couldn't find injection point" + delegate () { c.Goto(0); return c.ToString(); });
+                CustomLog.LogError("[Warp Map optimization] IL CreatingAbstractRooms couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -111,7 +111,7 @@ public static class Optimization
             }
             else
             {
-                CustomLog.LogError("[Warp Map optimization] IL TryGoToRegionMap couldn't find injection point" + delegate() { c.Goto(0); return c.ToString(); });
+                CustomLog.LogError("[Warp Map optimization] IL TryGoToRegionMap couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)

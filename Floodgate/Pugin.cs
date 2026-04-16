@@ -16,7 +16,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.16";
+    public const string Version = "0.1.20";
 
     public static Plugin? Instance { get; private set; }
 
@@ -24,13 +24,10 @@ public partial class Plugin : BaseUnityPlugin
 
     public static ManualLogSource logger;
 
-    public static int ictCount = 0;
-
     public static RemixInterface RemixOptions;
     public void Awake()
     {
         Instance = this;
-        ictCount = 0;
         if(woke)
         {
             return;
@@ -40,23 +37,12 @@ public partial class Plugin : BaseUnityPlugin
         On.RainWorld.PostModsInit += RainWorld_PostModsInit;
         On.RainWorld.OnModsInit += RainWorld_OnModsInit;
         On.ModManager.ModApplyer.Start += ModApplyer_Start;
-        On.StaticWorld.InitCustomTemplates += (On.StaticWorld.orig_InitCustomTemplates orig) =>
-        {
-            orig();
-            if (ictCount > 10 && ictCount < 20)
-            {
-                logger.LogInfo("Custom Templates Stack Below:\n" + new System.Diagnostics.StackTrace().ToString());
-            }
-            if (ictCount > 100)
-            {
-                throw new Exceptions.LoopException("Unexpected loop of the current method");
-            }
-            ictCount++;
-        };
 
         On.Menu.EndgameMeter.NotchMeter.ctor += NotchMeter_ctor;
 
         FloodgatePatcher.CustomLog.Log("Floodgate plugin initialized");
+
+        World.Map.Apply();
 
         woke = true;
     }
@@ -99,7 +85,14 @@ public partial class Plugin : BaseUnityPlugin
         //TurboAssetManager.Map();
         if (onmodsinit)
         {
-            orig(self);
+            try
+            {
+                orig(self);
+            }
+            catch (Exception origException)
+            {
+                CustomLog.LogError("OnModsInit failed at other mod. please report this, some hooks possibly failed and your game may not run well\n" + origException.ToString());
+            }
             Registry.Merge();
             return;
         }
@@ -112,9 +105,21 @@ public partial class Plugin : BaseUnityPlugin
             try
             {
                 ModCompat.NotScugPlaySpupSafari.Apply();
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 CustomLog.LogError("Not Slugcat Playables + Slugpup Safari compat failed\n" + e.ToString());
+            }
+        }
+        if (FGTools.IsModActive("iteratorCreator") && FGTools.IsModActive("emgtx"))
+        {
+            try
+            {
+                ModCompat.EmgTxIteratorCreator.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("EmgTx + Iterator Creator compat failed\n" + e.ToString());
             }
         }
         if (FGTools.IsModActive("javadog.gateNames"))
@@ -142,7 +147,7 @@ public partial class Plugin : BaseUnityPlugin
         {
             try
             {
-                ModCompat._RegionKit.BackgroundBuilder_Data.Apply();
+                ModCompat.RegionKit.RegionKitApply.Apply();
             }catch(Exception e)
             {
                 CustomLog.LogError("RegionKit specific apply failed\n" + e.ToString());
@@ -171,7 +176,13 @@ public partial class Plugin : BaseUnityPlugin
             }
         }
         //before orig
-        orig(self); //yes im blind
+        try
+        {
+            orig(self); //yes im blind
+        }catch(Exception origException)
+        {
+            CustomLog.LogError("OnModsInit failed at other mod. please report this, some hooks possibly failed and your game may not run well\n" +  origException.ToString());
+        }
         //after orig
         try
         {

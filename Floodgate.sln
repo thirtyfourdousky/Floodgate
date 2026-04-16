@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloodgateDownpour", "Floodg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModPacker", "ModPacker\ModPacker.csproj", "{DC3B4DB9-9431-4FC8-AC71-D18A5F7BD8F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloodgateExtra", "FloodgateExtra\FloodgateExtra.csproj", "{C8A5AB8F-8391-4F43-9A97-86EBC0B6AC6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{DC3B4DB9-9431-4FC8-AC71-D18A5F7BD8F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC3B4DB9-9431-4FC8-AC71-D18A5F7BD8F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC3B4DB9-9431-4FC8-AC71-D18A5F7BD8F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8A5AB8F-8391-4F43-9A97-86EBC0B6AC6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A5AB8F-8391-4F43-9A97-86EBC0B6AC6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A5AB8F-8391-4F43-9A97-86EBC0B6AC6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A5AB8F-8391-4F43-9A97-86EBC0B6AC6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,6 @@
 ﻿
 using FloodgatePatcher;
+using MonoMod.Cil;
 using System;
 using System.Linq;
 
@@ -100,5 +101,11 @@ public static class FGTools
             }
         }
         return negative != found;
+    }
+
+    public static string PrintInstrs(this ILCursor cursor)
+    {
+        cursor.Goto(0);
+        return cursor.ToString();
     }
 }

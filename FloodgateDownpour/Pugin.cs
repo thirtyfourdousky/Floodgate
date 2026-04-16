@@ -19,13 +19,10 @@ public class Plugin : BaseUnityPlugin
 
     public static ManualLogSource logger;
 
-    public static int ictCount = 0;
-
     public static RemixInterface RemixOptions;
     public void Awake()
     {
         Instance = this;
-        ictCount = 0;
         if(woke)
         {
             return;
@@ -34,19 +31,6 @@ public class Plugin : BaseUnityPlugin
 
         On.RainWorld.PostModsInit += RainWorld_PostModsInit;
         On.RainWorld.OnModsInit += RainWorld_OnModsInit;
-        On.StaticWorld.InitCustomTemplates += (On.StaticWorld.orig_InitCustomTemplates orig) =>
-        {
-            orig();
-            if (ictCount > 10 && ictCount < 20)
-            {
-                logger.LogInfo("Custom Templates Stack Below:\n" + new System.Diagnostics.StackTrace().ToString());
-            }
-            if (ictCount > 100)
-            {
-                throw new Exceptions.LoopException("Unexpected loop of the current method");
-            }
-            ictCount++;
-        };
 
         On.Menu.EndgameMeter.NotchMeter.ctor += NotchMeter_ctor;
 

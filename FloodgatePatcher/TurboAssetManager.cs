@@ -4,6 +4,7 @@ using System.Reflection;
 
 namespace FloodgatePatcher;
 
+//i don't remember why it's called that
 public static class TurboAssetManager
 {
     public static readonly Dictionary<string, FileCache> PreloadFiles = new(System.StringComparer.OrdinalIgnoreCase);

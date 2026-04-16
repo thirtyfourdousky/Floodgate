@@ -51,7 +51,7 @@ public static class Hooks
             }
             else
             {
-                CustomLog.LogError("[Extended Echo] ILHook PlayerThreatTracker_Update couldn't find injection point");
+                CustomLog.LogError("[Extended Echo] ILHook PlayerThreatTracker_Update couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -132,7 +132,7 @@ public static class Hooks
             }
             else
             {
-                CustomLog.LogError("[Extended Echo] ILHook GhostCreatureSedater_Update couldn't find injection point");
+                CustomLog.LogError("[Extended Echo] ILHook GhostCreatureSedater_Update couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -169,7 +169,7 @@ public static class Hooks
             }
             else
             {
-                CustomLog.LogError("[Extended Echo] ILHook GoldFlakes_Update couldn't find injection point");
+                CustomLog.LogError("[Extended Echo] ILHook GoldFlakes_Update couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -203,7 +203,7 @@ public static class Hooks
             }
             else
             {
-                CustomLog.LogError("[Extended Echo] ILHook GoldFlakes_ctor couldn't find injection point");
+                CustomLog.LogError("[Extended Echo] ILHook GoldFlakes_ctor couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -238,7 +238,7 @@ public static class Hooks
             }
             else
             {
-                CustomLog.LogError("[Extended Echo] ILHook Room_NowViewed couldn't find injection point");
+                CustomLog.LogError("[Extended Echo] ILHook Room_NowViewed couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -288,7 +288,7 @@ public static class Hooks
             }
             else
             {
-                CustomLog.LogError("[Extended Echo] ILHook FliesWorldAI AddFlyToSwarmRoom couldn't find injection point");
+                CustomLog.LogError("[Extended Echo] ILHook FliesWorldAI AddFlyToSwarmRoom couldn't find injection point" + c.PrintInstrs());
             }
         }
         catch (Exception ex)
@@ -362,7 +362,7 @@ public static class Hooks
             }
             else
             {
-                CustomLog.Log("[Extended Echo] ILHook ThreatDetermination Update could not find injection point");
+                CustomLog.LogError("[Extended Echo] ILHook ThreatDetermination Update could not find injection point" + c.PrintInstrs());
             }
         }catch (Exception ex)
         {

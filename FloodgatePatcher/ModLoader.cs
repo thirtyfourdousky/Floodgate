@@ -12,7 +12,7 @@ using System.Reflection;
 namespace FloodgatePatcher;
 public static class ModLoader
 {
-    public static readonly string LatestVersion = "v1.11.6";
+    public static readonly string LatestVersion = "v1.11.8";
     public static string CurrentVersion = "";
     public static bool IsLatest = false;
     public static string FloodgateMergedPath = null;

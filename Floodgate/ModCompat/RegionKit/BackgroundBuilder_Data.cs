@@ -8,14 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ModCompat._RegionKit;
+namespace ModCompat.RegionKit;
 
 public static class BackgroundBuilder_Data
 {
     public readonly static List<IDetour> hooks = new List<IDetour>();
     public static void Apply()
     {
-        hooks.Add(new ILHook(typeof(RegionKit.Modules.BackgroundBuilder.Data).GetMethod("RoomSettings_Load", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic), IL_RoomSettings_Load));
+        hooks.Add(new ILHook(typeof(global::RegionKit.Modules.BackgroundBuilder.Data).GetMethod("RoomSettings_Load", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic), IL_RoomSettings_Load));
     }
     public static void IL_RoomSettings_Load(ILContext context)
     {
