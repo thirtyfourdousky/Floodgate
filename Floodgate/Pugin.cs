@@ -16,7 +16,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.20";
+    public const string Version = "0.1.21";
 
     public static Plugin? Instance { get; private set; }
 
@@ -64,9 +64,10 @@ public partial class Plugin : BaseUnityPlugin
         {
             if(owner.tracker.ID == MoreSlugcats.MoreSlugcatsEnums.EndgameID.Nomad)
             {
-                for(int i = 0; i < tracker.myList.Count; i++)
+                int regionCount = Region.GetFullRegionOrder().Count;
+                for (int i = 0; i < tracker.myList.Count; i++)
                 {
-                    if (tracker.myList[i] >= Region.GetFullRegionOrder().Count)
+                    if (tracker.myList[i] >= regionCount)
                     {
                         tracker.myList[i] = 0;
                     }

@@ -339,6 +339,10 @@ public static class CustomMerger
                     }
                 }
             }
+            else
+            {
+                FloodgatePatcher.CustomLog.LogError("[World Loader] line " + merge.line + " is out of range a REPLACE operation (" + (parameters.Length < 3 ? "not enough" : "too many") + " parameters)");
+            }
         }
         else if (merge.operand == opREPLACEALL)
         {
