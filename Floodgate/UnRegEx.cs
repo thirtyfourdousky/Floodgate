@@ -38,11 +38,10 @@ public static class UnRegEx
                 count++;
             }
             CustomLog.Log("[UnRegEx] replaced " + count + " instructions on " + IL.Method.FullName);
-            //CustomLog.Log("             " + c.ToString());
         }
         catch (Exception ex)
         {
-            CustomLog.LogError("[UnRegEx] UnRegEx fucked up for "+ IL.Method.FullName +"\n" + ex.ToString());
+            CustomLog.LogError("[UnRegEx] fucked up for "+ IL.Method.FullName +"\n" + ex.ToString());
         }
     }
     public static string[] internalsplit(string _string, string pattern)

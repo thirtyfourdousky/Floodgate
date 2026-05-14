@@ -6,5 +6,6 @@ public static class RegionKitApply
     {
         BackgroundBuilder_Data.Apply();
         TurboBakerStuff.Apply();
+        ClimbablesModule.Apply();
     }
 }

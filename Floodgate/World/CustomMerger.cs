@@ -551,7 +551,7 @@ public static class CustomMerger
     {
         public static string AddCreatures(string line)
         {
-            Dictionary<string, int> modCreatures = new();
+            Dictionary<string, int> modCreatures = new(100);
             Dictionary<CreatureTemplate.Type, LCritItem> linecrits = new();
             if (line.ToLowerInvariant().Contains("lineage"))
             {

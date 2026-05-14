@@ -16,7 +16,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.21";
+    public const string Version = "0.1.22";
 
     public static Plugin? Instance { get; private set; }
 
@@ -100,7 +100,7 @@ public partial class Plugin : BaseUnityPlugin
         onmodsinit = true;
         TurboAssetManager.Apply();
         _Modules.DevTools.Objects.ObjectsMenu.Enable();
-
+        ModCompat._UnRegEx.Apply();
         if (FGTools.IsModActive("yeliah.slugpupFieldtrip") && FGTools.IsModActive("sprobgik.desecratinggraves"))
         {
             try
@@ -154,6 +154,16 @@ public partial class Plugin : BaseUnityPlugin
                 CustomLog.LogError("RegionKit specific apply failed\n" + e.ToString());
             }
         }
+        if (FGTools.IsModActive("MenuFixes"))
+        {
+            try
+            {
+                ModCompat.RemixAutoRestarter.Apply_MMF();
+            }catch(Exception e)
+            {
+                CustomLog.LogError("ManyMenuFixes specific apply failed\n" + e.ToString());
+            }
+        }
         if (FGTools.IsModActive("nacu.lunacy"))
         {
             try
@@ -170,6 +180,7 @@ public partial class Plugin : BaseUnityPlugin
             try
             {
                 ModCompat.CRS.IndexedEntranceClass.Apply();
+                Floodgate.Optimization.CRS.RegionProperties.Apply();
             }
             catch (Exception e)
             {

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 
 namespace FloodgatePatcher;
 public static class ModLoader
@@ -31,6 +32,8 @@ public static class ModLoader
     public static Assembly AssemblyCSharp;
 
     internal static List<IDetour> Hooks = new();
+
+    public static bool debug = false;
 
     public static void Init()
     {
@@ -82,6 +85,14 @@ public static class ModLoader
         //override MultiFolderLoader assembly resolving
         Hooks.Add(new Hook(typeof(ModManager).GetMethod("ResolveModDirectories", BindingFlags.NonPublic | BindingFlags.Static), ResolveModDirectories));
         Hooks.Add(new Hook(typeof(Utility).GetMethod("TryResolveDllAssembly", BindingFlags.Public | BindingFlags.Static, null, [typeof(AssemblyName), typeof(string), typeof(Assembly).MakeByRefType()], null), TryResolveDllAssemblyOverride));
+        if (File.Exists(Path.Combine(Paths.GameRootPath, "FloodgateDebug.txt")))
+        {
+            debug = true;
+
+            //Reflection.Assembly hooks
+            Hooks.Add(new ILHook(typeof(Assembly).GetMethod("LoadFile", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof(string) }, null), IL_Assembly_LoadFile));
+            Hooks.Add(new ILHook(typeof(Assembly).GetMethod("LoadFile", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof(string), typeof(Evidence) }, null), IL_Assembly_LoadFile));
+        }
         //Hooks.Add(new ILHook(typeof(Utility).GetMethod("TryResolveDllAssembly", BindingFlags.Public | BindingFlags.Static, null, [typeof(AssemblyName), typeof(string), typeof(Assembly).MakeByRefType()], null), IL_TryResolveDllAssembly));
 
         //IsLatest = (CurrentVersion == LatestVersion) || (int.Parse(new(CurrentVersion.Where(char.IsDigit).ToArray())) >= int.Parse(new(LatestVersion.Where(char.IsDigit).ToArray())));
@@ -221,6 +232,10 @@ public static class ModLoader
         string fallback = orig(self);
         if (OverridenPaths.ContainsKey(fallback))
         {
+            if (debug)
+            {
+                CustomLog.Log("PluginInfo location called; " + fallback + " -> " + OverridenPaths[fallback] ?? "null");
+            }
             return OverridenPaths[fallback] ?? fallback;
         }
         AssemblyName asmName = AssemblyName.GetAssemblyName(fallback);
@@ -415,6 +430,25 @@ public static class ModLoader
             CustomLog.LogError(e.ToString());
             assembly = null;
             return false;
+        }
+    }
+
+
+    public static void IL_Assembly_LoadFile(ILContext context)
+    {
+        try
+        {
+            ILCursor c = new(context);
+            c.Goto(0);
+            c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
+            c.EmitDelegate(delegate (string path)
+            {
+                CustomLog.Log("[DEBUG] Trying to load Assembly from path: " + path + "\n" + Environment.StackTrace);
+            });
+        }
+        catch(Exception e)
+        {
+            CustomLog.LogError(e.ToString());
         }
     }
 

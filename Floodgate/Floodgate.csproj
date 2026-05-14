@@ -57,6 +57,9 @@
     <Reference Include="Lunacy">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2930814260\plugins\Lunacy.dll</HintPath>
     </Reference>
+    <Reference Include="MenuFixes">
+      <HintPath>..\..\..\RainWorld\Workshop\3592352161\plugins\MenuFixes.dll</HintPath>
+    </Reference>
     <Reference Include="MergeFix">
       <HintPath>..\..\..\RainWorld\public\MergeFix.dll</HintPath>
     </Reference>
@@ -116,11 +119,14 @@
     <Compile Include="ExTools.cs" />
     <Compile Include="ModCompat\beecat.cs" />
     <Compile Include="ModCompat\CRS\IndexedEntranceClass.cs" />
+    <Compile Include="ModCompat\RemixAutoRestarter.cs" />
+    <Compile Include="Optimization\CRS\RegionProperties.cs" />
     <Compile Include="ModCompat\EmgTxIteratorCreator.cs" />
     <Compile Include="ModCompat\LBspecific.cs" />
     <Compile Include="ModCompat\Lunacy\CustomTokens\LunacyTokens.cs" />
     <Compile Include="ModCompat\NotScugPlaySpupSafari.cs" />
     <Compile Include="ModCompat\RegionKit\BackgroundBuilder_Data.cs" />
+    <Compile Include="ModCompat\RegionKit\ClimbablesModule.cs" />
     <Compile Include="ModCompat\RegionKit\RegionKitApply.cs" />
     <Compile Include="ModCompat\RegionKit\TurboBakerStuff.cs" />
     <Compile Include="ModCompat\WDTGG.cs" />

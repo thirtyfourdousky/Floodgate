@@ -37,6 +37,15 @@ public static class Patcher
     {
         logger = Logger.CreateLogSource("FloodgatePatcher");
         ModLoader.Init();
+        AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
+    }
+
+    private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
+    {
+        if (ModLoader.debug)
+        {
+            CustomLog.Log("[ASSEMBLY LOAD DEBUG] Assembly: " + args.LoadedAssembly.FullName + "\n Path: " + args.LoadedAssembly.Location ?? "...how is the path null?");
+        }
     }
 
     public static void Finish()

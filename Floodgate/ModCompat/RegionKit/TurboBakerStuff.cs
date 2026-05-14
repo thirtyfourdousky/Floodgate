@@ -55,6 +55,7 @@ public static class TurboBakerStuff
                     return;
                 }
                 fgtab.AddItems(fgtab.ThreadBakerButton = new OpSimpleButton(new Vector2(230f, 0f), new Vector2(80f, 30f), "Bake!!"));
+                fgtab.ThreadBakerButton.description = "Added by Floodgate";
                 fgtab.ThreadBakerButton.OnClick += fgtab._BakeClick;
             });
             c.GotoNext(MoveType.After,
@@ -114,7 +115,7 @@ public static class TurboBakerStuff
         public string roomname = roomName;
         public ConcurrentQueue<Task> tasks = new ConcurrentQueue<Task>();
         public Task lastTask = null;
-        public bool completed => lastTask is null || lastTask.IsCompleted;
+        public bool Completed => lastTask is null || lastTask.IsCompleted;
     }
 
     public class FGTurboBakerTab : TurboBakerTab
@@ -213,7 +214,7 @@ public static class TurboBakerStuff
                     {
                         foreach (var i in LoadRooms)
                         {
-                            if (i.Value.completed && i.Value.tasks.TryDequeue(out Task absLoad))
+                            if (i.Value.Completed && i.Value.tasks.TryDequeue(out Task absLoad))
                             {
                                 i.Value.lastTask = absLoad;
                                 absLoad.Start();

@@ -1,4 +1,5 @@
-﻿using FloodgatePatcher;
+﻿using Floodgate;
+using FloodgatePatcher;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ public static partial class _UnRegEx
     internal static readonly List<IDetour> _hooks = new List<IDetour>();
     public static void Apply()
     {
+        IL.Region.ctor_string_int_int_RainWorldGame_Timeline += UnRegEx.unregex;
+        IL.Room.LoadFromDataString += UnRegEx.unregex;
         if (FGTools.IsModActive("crs"))
         {
             try
@@ -29,8 +32,8 @@ public static partial class _UnRegEx
     {
         try
         {
-            _hooks.Add(new ILHook(typeof(CustomRegions.RegionProperties.RegionProperties).GetMethod("GenerateProperties", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic), Floodgate.UnRegEx.unregex));
-            _hooks.Add(new ILHook(typeof(CustomRegions.CustomWorld.WorldLoaderHook).GetMethod("FromConnectionsToList", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic), Floodgate.UnRegEx.unregex));
+            _hooks.Add(new ILHook(typeof(CustomRegions.RegionProperties.RegionProperties).GetMethod("GenerateProperties", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic), UnRegEx.unregex));
+            _hooks.Add(new ILHook(typeof(CustomRegions.CustomWorld.WorldLoaderHook).GetMethod("FromConnectionsToList", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic), UnRegEx.unregex));
         }
         catch (Exception ex)
         {

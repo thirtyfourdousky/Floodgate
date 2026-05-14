@@ -5,8 +5,6 @@ using MonoMod.RuntimeDetour;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModCompat.RegionKit;
 
@@ -43,7 +41,6 @@ public static class BackgroundBuilder_Data
                 count++;
             }
             CustomLog.Log("[Mod Compat] RegionKit BackgroundBuilder.Data RoomSettings_Load replaced " + count + " instructions");
-            //CustomLog.Log("             " + c.ToString());
         }catch(Exception ex)
         {
             CustomLog.LogError("[Mod Compat] RegionKit BackgroundBuilder.Data RoomSettings_Load fucked up\n"+ ex.ToString());
