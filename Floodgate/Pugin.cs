@@ -1,10 +1,12 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using FloodgatePatcher;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.22";
+    public const string Version = "0.1.231";
 
     public static Plugin? Instance { get; private set; }
 
@@ -32,6 +34,7 @@ public partial class Plugin : BaseUnityPlugin
         {
             return;
         }
+        OtherHooks.ResolveFilePathAlt = TurboAssetManager.AssetManager_ResolveFilePath_string_bool_bool;
         logger = base.Logger;
         
         On.RainWorld.PostModsInit += RainWorld_PostModsInit;
@@ -40,11 +43,92 @@ public partial class Plugin : BaseUnityPlugin
 
         On.Menu.EndgameMeter.NotchMeter.ctor += NotchMeter_ctor;
 
+        IL.ModManager.CheckInitIssues += ModManager_CheckInitIssues;
+
+        On.Futile.ctor += Futile_ctor;
+
         FloodgatePatcher.CustomLog.Log("Floodgate plugin initialized");
 
         World.Map.Apply();
 
         woke = true;
+    }
+
+    private void Futile_ctor(On.Futile.orig_ctor orig, Futile self)
+    {
+        orig(self);
+    }
+
+    private void ModManager_CheckInitIssues(ILContext il)
+    {
+        try
+        {
+            FieldReference displayclass = null;
+            ILCursor c = new ILCursor(il);
+
+            c.GotoNext(MoveType.After, x => x.MatchCallvirt(typeof(System.Reflection.Assembly).GetProperty("Location", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | BindingFlags.Instance).GetGetMethod()));
+            c.EmitDelegate<Func<string,string>>(delegate (string assemblyPath)
+            {
+                if(ModLoader.OverridenAssembliesPaths.TryGetValue(assemblyPath, out string realPath))
+                {
+                    return realPath;
+                }
+                return assemblyPath;
+            });
+
+            c.GotoNext(x => x.MatchLdloc(0), x => x.MatchLdfld(out displayclass), x => x.MatchLdfld("Options", "modChecksums"), x => x.MatchCallvirt(out var value) && value.Name == "Clear");
+            c.Emit(OpCodes.Ldloc_0);
+            c.Emit(OpCodes.Ldfld, displayclass);
+            c.EmitDelegate(delegate (Options options)
+            {
+                //disable mods with missing dependencies
+                HashSet<string> allenabledmods = new(StringComparer.OrdinalIgnoreCase);
+                for(int i = 0; i < ModManager.ActiveMods.Count; i++)
+                {
+                    allenabledmods.Add(ModManager.ActiveMods[i].id);
+                }
+                HashSet<string> brokenMods = new(StringComparer.OrdinalIgnoreCase);
+                for(int i = 0; i < ModManager.ActiveMods.Count; i++)
+                {
+                    if (brokenMods.Contains(ModManager.ActiveMods[i].id))
+                    {
+                        continue;
+                    }
+                    for(int ii = 0; ii < ModManager.ActiveMods[i].requirements.Length; ii++)
+                    {
+                        if (brokenMods.Contains(ModManager.ActiveMods[i].requirements[ii]) || !allenabledmods.Contains(ModManager.ActiveMods[i].requirements[ii]))
+                        {
+                            brokenMods.Add(ModManager.ActiveMods[i].id);
+                            i = -1;
+                            break;
+                        }
+                    }
+                }
+
+                for(int i = 0; i < ModManager.ActiveMods.Count; i++)
+                {
+                    if (brokenMods.Contains(ModManager.ActiveMods[i].id))
+                    {
+                        ModManager.ActiveMods.RemoveAt(i);
+                        i--;
+                    }
+                }
+
+                for(int i = 0; i < options.enabledMods.Count; i++)
+                {
+                    if (brokenMods.Contains(options.enabledMods[i]))
+                    {
+                        options.enabledMods.RemoveAt(i);
+                        i--;
+                    }
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            CustomLog.LogError("CheckInitIssues hook fucking failed. Please report this\n" + ex.ToString());
+            UnityEngine.Debug.LogError("CheckInitIssues hook fucking failed. Please report this\n" + ex.ToString());
+        }
     }
 
     private void ModApplyer_Start(On.ModManager.ModApplyer.orig_Start orig, ModManager.ModApplyer self, bool filesInBadState)
@@ -98,9 +182,63 @@ public partial class Plugin : BaseUnityPlugin
             return;
         }
         onmodsinit = true;
-        TurboAssetManager.Apply();
+        //TurboAssetManager.Apply();
         _Modules.DevTools.Objects.ObjectsMenu.Enable();
         ModCompat._UnRegEx.Apply();
+        if (FGTools.IsModActive("gelbi.faster-world"))
+        {
+            if (FGTools.IsModActive("0gelbi.silly-lib"))
+            {
+                try
+                {
+                    ModCompat.FasterWorldStuff.GSL_Apply();
+                }
+                catch (Exception ex2)
+                {
+                    CustomLog.LogError("Faster World compat with GSL failed\n" + ex2.ToString());
+                }
+            }
+            else
+            {
+                try
+                {
+                    ModCompat.FasterWorldStuff.Apply();
+                }
+                catch (Exception ex2)
+                {
+                    CustomLog.LogError("Faster World compat failed\n" + ex2.ToString());
+                }
+            }
+        }
+        if (FGTools.IsModActive("gelbi.faster-world-extra"))
+        {
+            if (FGTools.IsModActive("0gelbi.silly-lib"))
+            {
+                try
+                {
+                    ModCompat.FasterWorldStuff.GSL_Apply_Extra();
+                }
+                catch (Exception ex2)
+                {
+                    CustomLog.LogError("Faster World Extra compat with GSL failed\n" + ex2.ToString());
+                }
+            }
+            else
+            {
+                try
+                {
+                    ModCompat.FasterWorldStuff.Apply_Extra();
+                }
+                catch (Exception ex2)
+                {
+                    CustomLog.LogError("Faster World Extra compat failed\n" + ex2.ToString());
+                }
+            }
+        }
+        else
+        {
+            TurboAssetManager.Apply();
+        }
         if (FGTools.IsModActive("yeliah.slugpupFieldtrip") && FGTools.IsModActive("sprobgik.desecratinggraves"))
         {
             try
@@ -152,16 +290,6 @@ public partial class Plugin : BaseUnityPlugin
             }catch(Exception e)
             {
                 CustomLog.LogError("RegionKit specific apply failed\n" + e.ToString());
-            }
-        }
-        if (FGTools.IsModActive("MenuFixes"))
-        {
-            try
-            {
-                ModCompat.RemixAutoRestarter.Apply_MMF();
-            }catch(Exception e)
-            {
-                CustomLog.LogError("ManyMenuFixes specific apply failed\n" + e.ToString());
             }
         }
         if (FGTools.IsModActive("nacu.lunacy"))
@@ -216,6 +344,7 @@ public partial class Plugin : BaseUnityPlugin
         //mapTask.GetAwaiter().GetResult();
         NotEnums.EnabledMods.Apply();
         NotEnums.CreatureTemplateType.PostModsInit();
+
         if (postmodsinit)
         {
             return;

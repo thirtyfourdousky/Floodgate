@@ -2,10 +2,6 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Floodgate.World;
 
@@ -21,7 +17,28 @@ public static class Optimization
         On.WorldLoader.CreatingWorld += WorldLoader_CreatingWorld;
         On.WorldLoader.ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues += WorldLoader_ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues;
         On.WorldLoader.ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues_LoadingContext += WorldLoader_ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues_LoadingContext;
+        IL.CustomDecal.LoadFile += CustomDecal_LoadFile;
         //On.Region.ReloadRoomSettingsTemplate += Region_ReloadRoomSettingsTemplate;
+    }
+
+    private static void CustomDecal_LoadFile(ILContext il)
+    {
+        try
+        {
+            ILCursor c = new ILCursor(il);
+            c.GotoNext((Instruction x) => x.MatchLdstr("file:///"));
+            if (!c.Next.Next.Next.MatchCall<string>("Concat"))
+            {
+                throw new InvalidOperationException("Concat call could not be found");
+            }
+            c.Remove();
+            c.Goto(c.Next.Next);
+            c.Remove();
+        }
+        catch (Exception ex)
+        {
+            CustomLog.LogError("[optimization] IL CustomDecal_LoadFile fucking failed\n" + ex.ToString());
+        }
     }
 
     private static void Region_ctor_string_int_int_RainWorldGame_Timeline(ILContext il)

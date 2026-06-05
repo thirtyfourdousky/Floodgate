@@ -37,7 +37,7 @@ public static class ModLoader
 
     public static void Init()
     {
-        LogPath = Path.Combine(Paths.GameRootPath, "RainWorld_Data", "StreamingAssets", "FloodgateLog.txt");
+        LogPath = (Paths.GameRootPath + Path.DirectorySeparatorChar + "RainWorld_Data" + Path.DirectorySeparatorChar + "StreamingAssets" + Path.DirectorySeparatorChar + "FloodgateLog.txt");
         Patcher.logger.LogInfo("Log Path: " + LogPath);
         using (StreamWriter writer = File.CreateText(LogPath))
         {
@@ -47,9 +47,9 @@ public static class ModLoader
         }
 
         //load current game version
-        CurrentVersion = File.ReadAllText(Path.Combine(Paths.GameRootPath, "RainWorld_Data", "StreamingAssets", "GameVersion.txt"));
-        CacheLocation = Path.Combine(Paths.GameRootPath, "RainWorld_Data", "StreamingAssets", "FloodgatePatchedAssemblies");
-        FloodgateMergedInfo = new DirectoryInfo(FloodgateMergedPath = Path.Combine(Paths.GameRootPath, "RainWorld_Data", "StreamingAssets", "FloodgateMergedMods"));
+        CurrentVersion = File.ReadAllText((Paths.GameRootPath + Path.DirectorySeparatorChar + "RainWorld_Data" + Path.DirectorySeparatorChar + "StreamingAssets" + Path.DirectorySeparatorChar + "GameVersion.txt"));
+        CacheLocation = (Paths.GameRootPath + Path.DirectorySeparatorChar + "RainWorld_Data" + Path.DirectorySeparatorChar + "StreamingAssets" + Path.DirectorySeparatorChar + "FloodgatePatchedAssemblies");
+        FloodgateMergedInfo = new DirectoryInfo(FloodgateMergedPath = (Paths.GameRootPath + Path.DirectorySeparatorChar + "RainWorld_Data" + Path.DirectorySeparatorChar + "StreamingAssets" + Path.DirectorySeparatorChar + "FloodgateMergedMods"));
         if (!Directory.Exists(CacheLocation))
         {
             CustomLog.Log("Creating cached assemblies location at " + CacheLocation);
@@ -85,7 +85,7 @@ public static class ModLoader
         //override MultiFolderLoader assembly resolving
         Hooks.Add(new Hook(typeof(ModManager).GetMethod("ResolveModDirectories", BindingFlags.NonPublic | BindingFlags.Static), ResolveModDirectories));
         Hooks.Add(new Hook(typeof(Utility).GetMethod("TryResolveDllAssembly", BindingFlags.Public | BindingFlags.Static, null, [typeof(AssemblyName), typeof(string), typeof(Assembly).MakeByRefType()], null), TryResolveDllAssemblyOverride));
-        if (File.Exists(Path.Combine(Paths.GameRootPath, "FloodgateDebug.txt")))
+        if (File.Exists((Paths.GameRootPath + Path.DirectorySeparatorChar + "FloodgateDebug.txt")))
         {
             debug = true;
 
@@ -117,24 +117,24 @@ public static class ModLoader
         {
             string dir;
             if (!string.IsNullOrWhiteSpace(CurrentVersion) &&
-                ((Directory.Exists(dir = Path.Combine(mod.ModDir, CurrentVersion, plugins)) &&
+                ((Directory.Exists(dir = (mod.ModDir + Path.DirectorySeparatorChar + CurrentVersion + Path.DirectorySeparatorChar + plugins)) &&
                 loader(assemblyName, dir, out assembly)) ||
-                (Directory.Exists(dir = Path.Combine(mod.ModDir, CurrentVersion, patchers)) &&
+                (Directory.Exists(dir = (mod.ModDir + Path.DirectorySeparatorChar + CurrentVersion + Path.DirectorySeparatorChar + patchers)) &&
                 loader(assemblyName, dir, out assembly))))
             {
                 return true;
             }
             else if (IsLatest &&
-                ((Directory.Exists(dir = Path.Combine(mod.ModDir, newest, plugins)) &&
+                ((Directory.Exists(dir = (mod.ModDir + Path.DirectorySeparatorChar + newest + Path.DirectorySeparatorChar + plugins)) &&
                 loader(assemblyName, dir, out assembly)) ||
-                (Directory.Exists(dir = Path.Combine(mod.ModDir, newest, patchers)) &&
+                (Directory.Exists(dir = (mod.ModDir + Path.DirectorySeparatorChar + newest + Path.DirectorySeparatorChar + patchers)) &&
                 loader(assemblyName, dir, out assembly))))
             {
                 return true;
             }
-            else if ((Directory.Exists(dir = Path.Combine(mod.ModDir, plugins)) &&
+            else if ((Directory.Exists(dir = (mod.ModDir + Path.DirectorySeparatorChar + plugins)) &&
                 loader(assemblyName, dir, out assembly)) ||
-                (Directory.Exists(dir = Path.Combine(mod.ModDir, patchers)) &&
+                (Directory.Exists(dir = (mod.ModDir + Path.DirectorySeparatorChar + patchers)) &&
                 loader(assemblyName, dir, out assembly)))
             {
                 return true;
@@ -149,7 +149,7 @@ public static class ModLoader
         List<string> list = [dir, .. Directory.GetDirectories(dir, "*", SearchOption.AllDirectories)];
         foreach (string item in list)
         {
-            path = Path.Combine(item, assemblyName.Name + ".dll");
+            path = (item + Path.DirectorySeparatorChar + assemblyName.Name + ".dll");
             if (File.Exists(path))
             {
                 return true;
@@ -208,7 +208,7 @@ public static class ModLoader
             }
             if (patched)
             {
-                patchPath = Path.Combine(CacheLocation, assemblyName.Name + ".dll");
+                patchPath = (CacheLocation + Path.DirectorySeparatorChar + assemblyName.Name + ".dll");
                 assembly.Write(patchPath);
             }
             else
@@ -266,8 +266,8 @@ public static class ModLoader
             if (Patch(res, assemblyName, out string? patchPath))
             {
                 CustomLog.Log("Setting up patched assembly " + assemblyName.Name + " from " + res);
-                OverridenPaths.Add(fallback, patchPath);
-                return Path.Combine(patchPath);
+                OverridenPaths[fallback] = patchPath!;
+                return (patchPath!);
             }
         }
         catch (Exception ex)
@@ -320,7 +320,7 @@ public static class ModLoader
         foreach(var i  in paths)
         {
             string text;
-            if(OverrideAssembly((text = Path.Combine(i, assemblyName.Name + ".dll")), assemblyName, out string asmOverride))
+            if(OverrideAssembly((text = (i + Path.DirectorySeparatorChar + assemblyName.Name + ".dll")), assemblyName, out string asmOverride))
             {
                 text = asmOverride;
             }
@@ -396,6 +396,7 @@ public static class ModLoader
         }
     }
 
+    public static readonly Dictionary<string,string> OverridenAssembliesPaths = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
     public static bool OverrideAssembly(string path, AssemblyName assemblyName, out string assembly)
     {
         try
@@ -413,10 +414,10 @@ public static class ModLoader
             }
             string overridepath;
             if (IsLatest && hash is not null &&
-                File.Exists((overridepath = Path.Combine(FloodgatePath, "AssemblyOverride", hash, assemblyName.Name + ".fdll"))))
+                File.Exists((overridepath = (FloodgatePath + Path.DirectorySeparatorChar + "AssemblyOverride" + Path.DirectorySeparatorChar + hash + Path.DirectorySeparatorChar + assemblyName.Name + ".fdll"))))
             { 
                 CustomLog.Log("Overriding assembly path `" + path + "` with `" + overridepath + "`");
-                assembly = overridepath;
+                OverridenAssembliesPaths[(assembly = overridepath)] = path;
                 return true;
             }
             else

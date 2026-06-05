@@ -24,23 +24,22 @@ public static class Registry
         foreach (ModManager.Mod mod in ModManager.ActiveMods)
         {
             if (mod == null || Mods.Any(i=>i.mod.id == mod.id)) { continue; }
-            string floodgatepath = Path.Combine(mod.TargetedPath, "floodgate");
+            string floodgatepath = mod.TargetedPath + Path.DirectorySeparatorChar + "floodgate";
             if (mod.hasTargetedVersionFolder && Directory.Exists(floodgatepath))
             {
                 Mods.Add(new(floodgatepath, mod));
                 continue;
             }
-            floodgatepath = Path.Combine(mod.NewestPath, "floodgate");
+            floodgatepath = mod.NewestPath + Path.DirectorySeparatorChar + "floodgate";
             if (FloodgatePatcher.ModLoader.IsLatest && mod.hasNewestFolder && Directory.Exists(floodgatepath))
             {
                 Mods.Add(new(floodgatepath, mod));
                 continue;
             }
-            floodgatepath = Path.Combine(mod.path, "floodgate");
+            floodgatepath = mod.path + Path.DirectorySeparatorChar + "floodgate";
             if (Directory.Exists(floodgatepath))
             {
                 Mods.Add(new(floodgatepath, mod));
-                continue;
             }
         }
     }
@@ -67,7 +66,7 @@ public static class Registry
         List<string> mergedfiles = new();
         foreach(RegisteredMod mod in Mods)
         {
-            string mergedpath = Path.Combine(mod.floodgate, "merged", "merged.txt");
+            string mergedpath = (mod.floodgate + Path.DirectorySeparatorChar + "merged" + Path.DirectorySeparatorChar + "merged.txt");
             if (File.Exists(mergedpath))
             {
                 mergedfiles.Add(mergedpath);
@@ -139,7 +138,7 @@ public static class Registry
             foreach (RegisteredMod mod in Mods)
             {
 
-                string FolderPath = Path.Combine(mod.floodgate, "merged", merge);
+                string FolderPath = (mod.floodgate + Path.DirectorySeparatorChar + "merged" + Path.DirectorySeparatorChar + merge);
                 if (Directory.Exists(FolderPath))
                 {
                     MergeCopy(FolderPath, FolderPath);
@@ -148,7 +147,7 @@ public static class Registry
         }
         foreach (RegisteredMod mod in Mods)
         {
-            string overridePath = Path.Combine(mod.floodgate, "override");
+            string overridePath = (mod.floodgate + Path.DirectorySeparatorChar + "override");
             if (Directory.Exists(overridePath))
             {
                 MergeCopy(overridePath, overridePath);
@@ -173,7 +172,7 @@ public static class Registry
     public static readonly HashSet<string> handledpaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     public static void MergeCopy(string path, string trimm)
     {
-        string dirDestination = Path.Combine(FloodgatePatcher.ModLoader.FloodgateMergedInfo.FullName, path.Replace(trimm, "").TrimStart(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }));
+        string dirDestination = (FloodgatePatcher.ModLoader.FloodgateMergedInfo.FullName + Path.DirectorySeparatorChar + path.Replace(trimm, "").TrimStart(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }));
         //FloodgatePatcher.CustomLog.Log("[File Merging] Checking directory " + dirDestination);
         //FloodgatePatcher.CustomLog.Log("[File Merging] Path " + path + " Trimm " + trimm);
         if (!Directory.Exists(dirDestination))
@@ -194,7 +193,7 @@ public static class Registry
         }
         foreach(string file in Directory.GetFiles(path))
         {
-            string destination = Path.Combine(FloodgatePatcher.ModLoader.FloodgateMergedPath, file.Replace(trimm, "").TrimStart(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            string destination = (FloodgatePatcher.ModLoader.FloodgateMergedPath + Path.DirectorySeparatorChar + file.Replace(trimm, "").TrimStart(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             if (!File.Exists(destination))
             {
                 try

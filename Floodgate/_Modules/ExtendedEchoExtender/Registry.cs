@@ -73,7 +73,7 @@ public static class Registry
         //_extendedEchoesIDs.Clear();
         foreach (string regionshort in Region.GetFullRegionOrder())
         {
-            string confpath = AssetManager.ResolveFilePath(Path.Combine("world", regionshort, "eeechoesSettings.txt"));
+            string confpath = AssetManager.ResolveFilePath(("world" + Path.DirectorySeparatorChar + regionshort + Path.DirectorySeparatorChar + "eeechoesSettings.txt"));
 
             if(File.Exists(confpath)) 
             {

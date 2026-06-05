@@ -41,27 +41,33 @@
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
-    <Reference Include="CustomRegionsSupport">
-      <HintPath>..\..\..\RainWorld\public\CustomRegionsSupport.dll</HintPath>
+    <Reference Include="faster-world">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3560520816\plugins\faster-world.dll</HintPath>
+    </Reference>
+    <Reference Include="faster-world-extra">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3730322322\plugins\faster-world-extra.dll</HintPath>
     </Reference>
     <Reference Include="FieldTrip">
-      <HintPath>..\..\..\RainWorld\workshopLinks\SlugpupSafari\newest\plugins\FieldTrip.dll</HintPath>
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3031575620\newest\plugins\FieldTrip.dll</HintPath>
+    </Reference>
+    <Reference Include="gelbi-silly-lib">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3552276389\plugins\gelbi-silly-lib.dll</HintPath>
+    </Reference>
+    <Reference Include="gelbi-silly-lib-preloader">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3552276389\patchers\gelbi-silly-lib-preloader.dll</HintPath>
     </Reference>
     <Reference Include="HOOKS-Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\HOOKS-Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="LBMergedMods">
-      <HintPath>..\..\..\RainWorld\workshopLinks\M4rblelousEntityPack\newest\plugins\LBMergedMods.dll</HintPath>
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3311812030\newest\plugins\LBMergedMods.dll</HintPath>
     </Reference>
     <Reference Include="Lunacy">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2930814260\plugins\Lunacy.dll</HintPath>
     </Reference>
     <Reference Include="MenuFixes">
-      <HintPath>..\..\..\RainWorld\Workshop\3592352161\plugins\MenuFixes.dll</HintPath>
-    </Reference>
-    <Reference Include="MergeFix">
-      <HintPath>..\..\..\RainWorld\public\MergeFix.dll</HintPath>
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3592352161\plugins\MenuFixes.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\Mono.Cecil.dll</HintPath>
@@ -81,17 +87,26 @@
     <Reference Include="PUBLIC-Assembly-CSharp">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\utils\PUBLIC-Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PublicEmgTx">
-      <HintPath>..\..\..\RainWorld\PublicEmgTx.dll</HintPath>
+    <Reference Include="PUBLIC-CustomRegionsSupport">
+      <HintPath>..\..\..\ASM\1.11\PUBLIC-CustomRegionsSupport.dll</HintPath>
     </Reference>
-    <Reference Include="PublicIteratorCreator">
-      <HintPath>..\..\..\RainWorld\PublicIteratorCreator.dll</HintPath>
+    <Reference Include="PUBLIC-EmgTx">
+      <HintPath>..\..\..\ASM\1.11\PUBLIC-EmgTx.dll</HintPath>
     </Reference>
-    <Reference Include="RegionKit">
-      <HintPath>..\..\PublicDLL\RegionKit.dll</HintPath>
+    <Reference Include="PUBLIC-IteratorCreator">
+      <HintPath>..\..\..\ASM\1.11\PUBLIC-IteratorCreator.dll</HintPath>
+    </Reference>
+    <Reference Include="PUBLIC-MergeFix">
+      <HintPath>..\..\..\ASM\1.11\PUBLIC-MergeFix.dll</HintPath>
+    </Reference>
+    <Reference Include="PUBLIC-RegionKit">
+      <HintPath>..\..\..\ASM\1.11\PUBLIC-RegionKit.dll</HintPath>
+    </Reference>
+    <Reference Include="PUBLIC-WDTGG">
+      <HintPath>..\..\..\ASM\1.11\PUBLIC-WDTGG.dll</HintPath>
     </Reference>
     <Reference Include="SprobBanana">
-      <HintPath>..\..\..\RainWorld\workshopLinks\NotSlugcatPlayables\plugins\SprobBanana.dll</HintPath>
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3504376213\plugins\SprobBanana.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -108,9 +123,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="WDTGG">
-      <HintPath>..\..\References\WDTGG.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\LoopException.cs" />
@@ -119,6 +131,7 @@
     <Compile Include="ExTools.cs" />
     <Compile Include="ModCompat\beecat.cs" />
     <Compile Include="ModCompat\CRS\IndexedEntranceClass.cs" />
+    <Compile Include="ModCompat\FasterWorldStuff.cs" />
     <Compile Include="ModCompat\RemixAutoRestarter.cs" />
     <Compile Include="Optimization\CRS\RegionProperties.cs" />
     <Compile Include="ModCompat\EmgTxIteratorCreator.cs" />

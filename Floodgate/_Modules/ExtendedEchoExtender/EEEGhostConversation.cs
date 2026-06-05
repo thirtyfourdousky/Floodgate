@@ -82,7 +82,7 @@ internal class EEEGhostConversation : GhostConversation
     protected string ResolveConversation(InGameTranslator.LanguageID lang)
     {
         string langshort = LocalizationTranslator.LangShort(lang);
-        string path = AssetManager.ResolveFilePath(System.IO.Path.Combine("text", "text_" + langshort, "eeechoConv_" + ghost.worldGhost.ghostID + ".txt"));
+        string path = AssetManager.ResolveFilePath(("text" + Path.DirectorySeparatorChar + "text_" + langshort + Path.DirectorySeparatorChar + "eeechoConv_" + ghost.worldGhost.ghostID + ".txt"));
         bool isdef = lang == InGameTranslator.LanguageID.English;
         if (!System.IO.File.Exists(path))
         {
@@ -90,7 +90,7 @@ internal class EEEGhostConversation : GhostConversation
             {
                 return null;
             }
-            path = AssetManager.ResolveFilePath(System.IO.Path.Combine("world", ghost.worldGhost.world.name, "eeechoConv_" + ghost.worldGhost.ghostID + ".txt"));
+            path = AssetManager.ResolveFilePath(("world" + Path.DirectorySeparatorChar + ghost.worldGhost.world.name + Path.DirectorySeparatorChar + "eeechoConv_" + ghost.worldGhost.ghostID + ".txt"));
             if (!System.IO.File.Exists(path))
             {
                 return null;
@@ -107,10 +107,10 @@ internal class EEEGhostConversation : GhostConversation
     {
         string langshort = LocalizationTranslator.LangShort(lang);
 
-        string path = AssetManager.ResolveFilePath(System.IO.Path.Combine("text", "text_" + langshort, "eeechoConv_" + ghost.worldGhost.ghostID + "-" + slugname + "-" + (hasmark ? "mark" : "nomark") + ".txt"));
+        string path = AssetManager.ResolveFilePath(("text" + Path.DirectorySeparatorChar + "text_" + langshort + Path.DirectorySeparatorChar + "eeechoConv_" + ghost.worldGhost.ghostID + "-" + slugname + "-" + (hasmark ? "mark" : "nomark") + ".txt"));
         if(!System.IO.File.Exists(path))
         {
-            path = AssetManager.ResolveFilePath(System.IO.Path.Combine("text", "text_" + langshort, "eeechoConv_" + ghost.worldGhost.ghostID + "-" + slugname + ".txt"));
+            path = AssetManager.ResolveFilePath(("text" + Path.DirectorySeparatorChar + "text_" + langshort + Path.DirectorySeparatorChar + "eeechoConv_" + ghost.worldGhost.ghostID + "-" + slugname + ".txt"));
         }
         bool isdef = lang == InGameTranslator.LanguageID.English;
         if (!System.IO.File.Exists(path))
@@ -119,10 +119,10 @@ internal class EEEGhostConversation : GhostConversation
             {
                 return null;
             }
-            path = AssetManager.ResolveFilePath(System.IO.Path.Combine("world", ghost.worldGhost.world.name, "eeechoConv_" + ghost.worldGhost.ghostID + "-" + slugname + "-" + (hasmark ? "mark" : "nomark") + ".txt"));
+            path = AssetManager.ResolveFilePath(("world" + Path.DirectorySeparatorChar + ghost.worldGhost.world.name + Path.DirectorySeparatorChar + "eeechoConv_" + ghost.worldGhost.ghostID + "-" + slugname + "-" + (hasmark ? "mark" : "nomark") + ".txt"));
             if (!System.IO.File.Exists(path))
             {
-                path = AssetManager.ResolveFilePath(System.IO.Path.Combine("world", ghost.worldGhost.world.name, "eeechoConv_" + ghost.worldGhost.ghostID + "-" + slugname + ".txt"));
+                path = AssetManager.ResolveFilePath(("world" + Path.DirectorySeparatorChar + ghost.worldGhost.world.name + Path.DirectorySeparatorChar + "eeechoConv_" + ghost.worldGhost.ghostID + "-" + slugname + ".txt"));
             }
             if (!System.IO.File.Exists(path))
             {

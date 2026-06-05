@@ -38,7 +38,7 @@ public static class MergeFixMap
                 c.EmitDelegate(delegate (string MergedMods)
                 {
                     //literally vanilla (no DLC)
-                    string VanillaWorldPath = Path.Combine(RWCustom.Custom.RootFolderDirectory(), "World");
+                    string VanillaWorldPath = (RWCustom.Custom.RootFolderDirectory() + Path.DirectorySeparatorChar + "World");
                     Map.RelativeCopy(VanillaWorldPath, MergedMods);
 
                     //dlc and mods
@@ -46,19 +46,19 @@ public static class MergeFixMap
                     {
                         List<string> searchPaths = new List<string>();
 
-                        string targetedWorld = Path.Combine(ModManager.ActiveMods[i].TargetedPath, "World");
+                        string targetedWorld = (ModManager.ActiveMods[i].TargetedPath + Path.DirectorySeparatorChar + "World");
                         if (Directory.Exists(targetedWorld))
                         {
                             searchPaths.Add(targetedWorld);
                         }
 
-                        string newestWorld = Path.Combine(ModManager.ActiveMods[i].NewestPath, "World");
+                        string newestWorld = (ModManager.ActiveMods[i].NewestPath + Path.DirectorySeparatorChar + "World");
                         if (FloodgatePatcher.ModLoader.IsLatest && Directory.Exists(newestWorld))
                         {
                             searchPaths.Add(newestWorld);
                         }
 
-                        string regularWorld = Path.Combine(ModManager.ActiveMods[i].path, "World");
+                        string regularWorld = (ModManager.ActiveMods[i].path + Path.DirectorySeparatorChar + "World");
                         if (Directory.Exists(regularWorld))
                         {
                             searchPaths.Add(regularWorld);

@@ -32,22 +32,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="1915HOOKS-Assembly-CSharp">
-      <HintPath>..\..\..\RainWorld\ASM\1915HOOKS-Assembly-CSharp.dll</HintPath>
-      <Aliases>global</Aliases>
-    </Reference>
-    <Reference Include="1915PUBLIC-Assembly-CSharp">
-      <HintPath>..\..\..\RainWorld\ASM\1915PUBLIC-Assembly-CSharp.dll</HintPath>
-      <Aliases>global</Aliases>
-    </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
+    <Reference Include="HOOKS-Assembly-CSharp">
+      <HintPath>..\..\..\ASM\HOOKS-Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="LBMergedMods">
-      <HintPath>..\..\..\RainWorld\workshopLinks\M4rblelousEntityPack\v1.9.15b\plugins\LBMergedMods.dll</HintPath>
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3311812030\v1.9.15b\plugins\LBMergedMods.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\Mono.Cecil.dll</HintPath>
@@ -60,6 +55,9 @@
     </Reference>
     <Reference Include="MonoMod.Utils">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\MonoMod.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="PUBLIC-Assembly-CSharp">
+      <HintPath>..\..\..\ASM\PUBLIC-Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

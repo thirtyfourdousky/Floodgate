@@ -38,6 +38,9 @@
     <Reference Include="BepInEx.MultiFolderLoader">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\patchers\BepInEx.MultiFolderLoader.dll</HintPath>
     </Reference>
+    <Reference Include="HOOKS-Assembly-CSharp">
+      <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\HOOKS-Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\Mono.Cecil.dll</HintPath>
     </Reference>

@@ -30,47 +30,47 @@ public static class Program
         } while (key.Key != ConsoleKey.Y && key.Key != ConsoleKey.N && key.Key != ConsoleKey.Escape);
 
         //1.9.15b
-        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgateDownpour", "bin", "Debug", "Floodgate.dll"),
+        PathM.BulkCopy((solutionPath + Path.DirectorySeparatorChar + "FloodgateDownpour" + Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "Floodgate.dll"),
             "plugins",
-            Path.Combine("v1.9.15b", "plugins"));
+            ("v1.9.15b" + Path.DirectorySeparatorChar + "plugins"));
         
         //1.10 && 1.11
-        PathM.BulkCopy(Path.Combine(solutionPath, "Floodgate", "bin", "Debug", "Floodgate.dll"),
-            Path.Combine("newest", "plugins"),
-            Path.Combine("v1.10.4", "plugins"));
+        PathM.BulkCopy((solutionPath + Path.DirectorySeparatorChar + "Floodgate" + Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "Floodgate.dll"),
+            ("newest" + Path.DirectorySeparatorChar + "plugins"),
+            ("v1.10.4" + Path.DirectorySeparatorChar + "plugins"));
         //Extra
-        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgateExtra", "bin", "Debug", "FloodgateExtra.dll"),
-            Path.Combine("newest", "plugins"),
-            Path.Combine("v1.10.4", "plugins"));
+        PathM.BulkCopy((solutionPath + Path.DirectorySeparatorChar + "FloodgateExtra" + Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "FloodgateExtra.dll"),
+            ("newest" + Path.DirectorySeparatorChar + "plugins"),
+            ("v1.10.4" + Path.DirectorySeparatorChar + "plugins"));
 
         //patcher needs to be in ALL versioned paths
-        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgatePatcher", "bin", "Debug", "FloodgatePatcher.dll"),
+        PathM.BulkCopy((solutionPath + Path.DirectorySeparatorChar + "FloodgatePatcher" + Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "FloodgatePatcher.dll"),
             "patchers",
-            Path.Combine("v1.9.15b", "patchers"),
-            Path.Combine("v1.10.4", "patchers"),
-            Path.Combine("newest", "patchers"));
+            ("v1.9.15b" + Path.DirectorySeparatorChar + "patchers"),
+            ("v1.10.4" + Path.DirectorySeparatorChar + "patchers"),
+            ("newest" + Path.DirectorySeparatorChar + "patchers"));
 
         //pdb
         //1.9.15b
-        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgateDownpour", "bin", "Debug", "Floodgate.pdb"),
+        PathM.BulkCopy((solutionPath + Path.DirectorySeparatorChar + "FloodgateDownpour" + Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "Floodgate.pdb"),
             "plugins",
-            Path.Combine("v1.9.15b", "plugins"));
+            ("v1.9.15b" + Path.DirectorySeparatorChar + "plugins"));
         
         //1.10 && 1.11
-        PathM.BulkCopy(Path.Combine(solutionPath, "Floodgate", "bin", "Debug", "Floodgate.pdb"),
-            Path.Combine("newest", "plugins"),
-            Path.Combine("v1.10.4", "plugins"));
+        PathM.BulkCopy((solutionPath + Path.DirectorySeparatorChar + "Floodgate" + Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "Floodgate.pdb"),
+            ("newest" + Path.DirectorySeparatorChar + "plugins"),
+            ("v1.10.4" + Path.DirectorySeparatorChar + "plugins"));
         //Extra
-        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgateExtra", "bin", "Debug", "FloodgateExtra.pdb"),
-            Path.Combine("newest", "plugins"),
-            Path.Combine("v1.10.4", "plugins"));
+        PathM.BulkCopy((solutionPath + Path.DirectorySeparatorChar + "FloodgateExtra" + Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "FloodgateExtra.pdb"),
+            ("newest" + Path.DirectorySeparatorChar + "plugins"),
+            ("v1.10.4" + Path.DirectorySeparatorChar + "plugins"));
 
         //patcher needs to be in ALL versioned paths
-        PathM.BulkCopy(Path.Combine(solutionPath, "FloodgatePatcher", "bin", "Debug", "FloodgatePatcher.pdb"),
+        PathM.BulkCopy((solutionPath + Path.DirectorySeparatorChar + "FloodgatePatcher" + Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "FloodgatePatcher.pdb"),
             "patchers",
-            Path.Combine("v1.9.15b", "patchers"),
-            Path.Combine("v1.10.4", "patchers"),
-            Path.Combine("newest", "patchers"));
+            ("v1.9.15b" + Path.DirectorySeparatorChar + "patchers"),
+            ("v1.10.4" + Path.DirectorySeparatorChar + "patchers"),
+            ("newest" + Path.DirectorySeparatorChar + "patchers"));
 
     }
 }
@@ -83,10 +83,10 @@ public static class PathM
         {
             try
             {
-                Console.WriteLine("Copying " + filepath + " to " + Path.Combine(Program.path, dest));
+                Console.WriteLine("Copying " + filepath + " to " + (Program.path + Path.DirectorySeparatorChar + dest));
                 FileInfo info = new(filepath);
-                File.Copy(filepath, Path.Combine(Program.path, dest, info.Name), true);
-                Console.WriteLine("Copied " + filepath + " to " + Path.Combine(Program.path, dest));
+                File.Copy(filepath, (Program.path + Path.DirectorySeparatorChar + dest + Path.DirectorySeparatorChar + info.Name), true);
+                Console.WriteLine("Copied " + filepath + " to " + (Program.path + Path.DirectorySeparatorChar + dest));
             }catch (Exception ex) { Console.WriteLine(ex.ToString()); Environment.Exit(0); }
         }
     }

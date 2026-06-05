@@ -65,6 +65,12 @@ public class Plugin : BaseUnityPlugin
     bool onmodsinit = false;
     private void RainWorld_OnModsInit(On.RainWorld.orig_OnModsInit orig, RainWorld self)
     {
+        if (true)
+        {
+            throw new NotImplementedException("Floodgate for downpour is very broken, sorry");
+        }
+
+#pragma warning disable CS0162
         if (NotEnums.EnabledMods.IsModActive("lb-fgf-m4r-ik.modpack"))
         {
             try
@@ -91,6 +97,7 @@ public class Plugin : BaseUnityPlugin
         {
             FloodgatePatcher.CustomLog.LogError(e.ToString());
         }
+#pragma warning restore CS0162
     }
 
     bool postmodsinit = false;

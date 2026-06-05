@@ -1,6 +1,9 @@
 ﻿using BepInEx;
+using FloodgatePatcher;
+using ModCompat;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +46,17 @@ public class FloodgateExtra : BaseUnityPlugin
         catch (Exception e)
         {
             FloodgatePatcher.CustomLog.LogError("Beecat apply failed\nIf Beecat is not present, just ignore this\n" + e.ToString());
+        }
+        try
+        {
+            ModCompat.RemixAutoRestarter.Apply_MMF();
+        }
+        catch (FileNotFoundException)
+        {
+        }
+        catch (Exception e)
+        {
+            FloodgatePatcher.CustomLog.LogError("ManyMenuFixes specific apply failed.\nIf ManyMenuFixes is not present, just ignore this\n" + e.ToString());
         }
     }
 

@@ -15,7 +15,6 @@ public static partial class _UnRegEx
     public static void Apply()
     {
         IL.Region.ctor_string_int_int_RainWorldGame_Timeline += UnRegEx.unregex;
-        IL.Room.LoadFromDataString += UnRegEx.unregex;
         if (FGTools.IsModActive("crs"))
         {
             try

@@ -40,8 +40,8 @@ public static class RemixAutoRestarter
 
     public static System.Diagnostics.Process EditRestart(System.Diagnostics.ProcessStartInfo info)
     {
-        info.EnvironmentVariables.Add("RWGAMEPAH", info.FileName);
-        info.EnvironmentVariables.Add("RWOLDPID", System.Diagnostics.Process.GetCurrentProcess().Id.ToString());
+        info.EnvironmentVariables["RWGAMEPAH"] = info.FileName;
+        info.EnvironmentVariables["RWOLDPID"] = System.Diagnostics.Process.GetCurrentProcess().Id.ToString();
         info.FileName = ModLoader.FloodgatePath + Path.DirectorySeparatorChar + "reload" + Path.DirectorySeparatorChar + "Restarter.exe";
         return System.Diagnostics.Process.Start(info);
     }
