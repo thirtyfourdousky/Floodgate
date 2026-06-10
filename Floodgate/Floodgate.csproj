@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\InlineIL.Fody.1.10.2\build\InlineIL.Fody.props" Condition="Exists('..\packages\InlineIL.Fody.1.10.2\build\InlineIL.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,6 +14,8 @@
     <LangVersion>12</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,6 +62,9 @@
     <Reference Include="HOOKS-Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\HOOKS-Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="InlineIL, Version=1.10.2.0, Culture=neutral, PublicKeyToken=1058fa0ac76b4b05, processorArchitecture=MSIL">
+      <HintPath>..\packages\InlineIL.Fody.1.10.2\lib\net452\InlineIL.dll</HintPath>
     </Reference>
     <Reference Include="LBMergedMods">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3311812030\newest\plugins\LBMergedMods.dll</HintPath>
@@ -123,6 +129,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
+    <Reference Include="VoidTemplate">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3127426082\plugins\VoidTemplate.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\LoopException.cs" />
@@ -132,6 +141,7 @@
     <Compile Include="ModCompat\beecat.cs" />
     <Compile Include="ModCompat\CRS\IndexedEntranceClass.cs" />
     <Compile Include="ModCompat\FasterWorldStuff.cs" />
+    <Compile Include="ModCompat\LastWish.cs" />
     <Compile Include="ModCompat\RemixAutoRestarter.cs" />
     <Compile Include="Optimization\CRS\RegionProperties.cs" />
     <Compile Include="ModCompat\EmgTxIteratorCreator.cs" />
@@ -139,7 +149,6 @@
     <Compile Include="ModCompat\Lunacy\CustomTokens\LunacyTokens.cs" />
     <Compile Include="ModCompat\NotScugPlaySpupSafari.cs" />
     <Compile Include="ModCompat\RegionKit\BackgroundBuilder_Data.cs" />
-    <Compile Include="ModCompat\RegionKit\ClimbablesModule.cs" />
     <Compile Include="ModCompat\RegionKit\RegionKitApply.cs" />
     <Compile Include="ModCompat\RegionKit\TurboBakerStuff.cs" />
     <Compile Include="ModCompat\WDTGG.cs" />
@@ -170,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FloodgatePatcher\FloodgatePatcher.csproj">
@@ -182,4 +192,12 @@
     <Folder Include="ExHooks\FIL\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Fody.6.9.3\build\Fody.targets" Condition="Exists('..\packages\Fody.6.9.3\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.6.9.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.9.3\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\InlineIL.Fody.1.10.2\build\InlineIL.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\InlineIL.Fody.1.10.2\build\InlineIL.Fody.props'))" />
+  </Target>
 </Project>

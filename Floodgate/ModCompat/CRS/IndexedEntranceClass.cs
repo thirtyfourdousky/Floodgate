@@ -2,9 +2,11 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
+using MonoMod.RuntimeDetour.HookGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,10 +14,13 @@ namespace ModCompat.CRS;
 
 public static class IndexedEntranceClass
 {
-    public readonly static List<IDetour> hooks = new List<IDetour>();
+    //public readonly static List<IDetour> hooks = new List<IDetour>();
     internal static void Apply()
     {
-        hooks.Add(new ILHook(typeof(global::CustomRegions.CustomWorld.IndexedEntranceClass).GetMethod("AbstractRoom_ExitIndex", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic), IL_AbstractRoom_ExitIndex));
+        //hooks.Add(new ILHook(typeof(global::CustomRegions.CustomWorld.IndexedEntranceClass).GetMethod("AbstractRoom_ExitIndex", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic), IL_AbstractRoom_ExitIndex));
+        InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(global::CustomRegions.CustomWorld.IndexedEntranceClass), "AbstractRoom_ExitIndex"));
+        InlineIL.IL.Pop<RuntimeMethodHandle>(out RuntimeMethodHandle handle);
+        HookEndpointManager.Modify(MethodBase.GetMethodFromHandle(handle) , IL_AbstractRoom_ExitIndex);
     }
     public static void IL_AbstractRoom_ExitIndex(ILContext il)
     {

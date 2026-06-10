@@ -18,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.231";
+    public const string Version = "0.1.24";
 
     public static Plugin? Instance { get; private set; }
 
@@ -45,18 +45,11 @@ public partial class Plugin : BaseUnityPlugin
 
         IL.ModManager.CheckInitIssues += ModManager_CheckInitIssues;
 
-        On.Futile.ctor += Futile_ctor;
-
         FloodgatePatcher.CustomLog.Log("Floodgate plugin initialized");
 
         World.Map.Apply();
 
         woke = true;
-    }
-
-    private void Futile_ctor(On.Futile.orig_ctor orig, Futile self)
-    {
-        orig(self);
     }
 
     private void ModManager_CheckInitIssues(ILContext il)
@@ -313,6 +306,17 @@ public partial class Plugin : BaseUnityPlugin
             catch (Exception e)
             {
                 CustomLog.LogError("CRS specific apply failed\n" + e.ToString());
+            }
+        }
+        if (FGTools.IsModActive("rainworldlastwish"))
+        {
+            try
+            {
+                ModCompat.LastWish.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("LastWish apply failed\n" + e.ToString());
             }
         }
         //before orig

@@ -47,7 +47,7 @@ public static class Program
         //assuming i did it right, autorestarter already passed the right variables and args
         foreach (DictionaryEntry i in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process))
         {
-            psi.EnvironmentVariables.Add((string)i.Key, (string)i.Value);
+            psi.EnvironmentVariables[(string)i.Key] = (string)i.Value!;
         }
         psi.UseShellExecute = false;
         psi.FileName = rwPath;

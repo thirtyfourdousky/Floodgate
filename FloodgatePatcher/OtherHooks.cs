@@ -20,6 +20,7 @@ public static class OtherHooks
         HookEndpointManager.OnModify += HookEndpointManager_OnModify;
     }
 
+    //resolve file path stuff
     public static On.AssetManager.hook_ResolveFilePath_string_bool_bool ResolveFilePathAlt = ResolveFilePath;
 
     public static string ResolveFilePath(On.AssetManager.orig_ResolveFilePath_string_bool_bool orig, string path, bool skipMergedMods, bool skipConsoleFiles)

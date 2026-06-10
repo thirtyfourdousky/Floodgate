@@ -107,7 +107,7 @@ public static class FasterWorldStuff
     public static string ResolveFilePath(string path)
     {
         string text;
-        if (((TurboAssetManager.accessfgmerged && File.Exists(text = RWCustom.Custom.RootFolderDirectory() + Path.DirectorySeparatorChar + "floodgatemergedmods" + Path.DirectorySeparatorChar + path)) || File.Exists(text = faster_world.M_Assets.mergedmodsPath + path)))
+        if (((TurboAssetManager.accessfgmerged && File.Exists(text = FloodgateMergedMods + path)) || File.Exists(text = faster_world.M_Assets.mergedmodsPath + path)))
         {
             return text;
         }
@@ -124,4 +124,6 @@ public static class FasterWorldStuff
         }
         return null;
     }
+
+    public static string FloodgateMergedMods = RWCustom.Custom.RootFolderDirectory() + Path.DirectorySeparatorChar + "floodgatemergedmods" + Path.DirectorySeparatorChar;
 }

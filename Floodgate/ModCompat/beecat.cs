@@ -5,6 +5,7 @@ using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
+using MonoMod.RuntimeDetour.HookGen;
 using System;
 using System.Collections.Generic;
 
@@ -12,11 +13,15 @@ namespace ModCompat;
 
 public static class beecat
 {
-    internal static readonly List<IDetour> _hooks = new List<IDetour>();
+    //internal static readonly List<IDetour> _hooks = new List<IDetour>();
     public static void Apply()
     {
         CustomLog.Log("Beecat apply..");
-        _hooks.Add(new ILHook(typeof(BeeWorld.BupHook).GetMethod("GhostCreatureSedater_Update", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic), BupGhostCreatureSedaterUpdateOverride));
+        //_hooks.Add(new ILHook(typeof(BeeWorld.BupHook).GetMethod("GhostCreatureSedater_Update", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic), BupGhostCreatureSedaterUpdateOverride));
+
+        InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(BeeWorld.BupHook), "GhostCreatureSedater_Update"));
+        InlineIL.IL.Pop<RuntimeMethodHandle>(out RuntimeMethodHandle handle);
+        HookEndpointManager.Modify(System.Reflection.MethodBase.GetMethodFromHandle(handle), BupGhostCreatureSedaterUpdateOverride);
     }
     private static void BupGhostCreatureSedaterUpdateOverride(ILContext il)
     {
@@ -40,6 +45,7 @@ public static class beecat
                         );
                     cursor.Remove();
                     cursor.EmitDelegate(delegate(CreatureTemplate template) { return (template.ghostSedationImmune || template.type == BeeEnums.CreatureType.Bup); });
+                    FloodgatePatcher.CustomLog.LogError("beecat hook success");
                 }
                 catch (Exception e)
                 {
