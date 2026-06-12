@@ -14,6 +14,12 @@ public static class FGTools
         }
         return false;
     }
+
+    public static bool IsAsmActive(string name)
+    {
+        return ModLoader.LoadedAssemblies.Contains(name);
+    }
+
     public static string[] ProcessTimelineConditions(string[] lines, SlugcatStats.Timeline slug)
     {
         string remove = "___";

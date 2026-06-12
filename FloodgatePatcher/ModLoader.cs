@@ -19,6 +19,8 @@ public static class ModLoader
     public static string FloodgateMergedPath = null;
     public static DirectoryInfo FloodgateMergedInfo = null;
 
+    public static readonly HashSet<string> LoadedAssemblies = new(StringComparer.OrdinalIgnoreCase);
+
     const string newest = "newest";
     const string plugins = "plugins";
     const string patchers = "patchers";

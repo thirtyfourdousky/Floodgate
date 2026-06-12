@@ -18,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.24";
+    public const string Version = "0.1.241";
 
     public static Plugin? Instance { get; private set; }
 
@@ -178,53 +178,61 @@ public partial class Plugin : BaseUnityPlugin
         //TurboAssetManager.Apply();
         _Modules.DevTools.Objects.ObjectsMenu.Enable();
         ModCompat._UnRegEx.Apply();
-        if (FGTools.IsModActive("gelbi.faster-world"))
+        bool fasterworld = FGTools.IsModActive("gelbi.faster-world");
+        bool fasterworldextra = FGTools.IsModActive("gelbi.faster-world-extra");
+        bool GSL = FGTools.IsModActive("0gelbi.silly-lib");
+        if (fasterworld || fasterworldextra)
         {
-            if (FGTools.IsModActive("0gelbi.silly-lib"))
+            if (fasterworld)
             {
-                try
+                CustomLog.Log("Faster World apply" + (GSL? " with GSL" : "") + "...");
+                if (GSL)
                 {
-                    ModCompat.FasterWorldStuff.GSL_Apply();
+                    try
+                    {
+                        ModCompat.FasterWorldStuff.GSL_Apply();
+                    }
+                    catch (Exception ex2)
+                    {
+                        CustomLog.LogError("Faster World compat with GSL failed\n" + ex2.ToString());
+                    }
                 }
-                catch (Exception ex2)
+                else
                 {
-                    CustomLog.LogError("Faster World compat with GSL failed\n" + ex2.ToString());
+                    try
+                    {
+                        ModCompat.FasterWorldStuff.Apply();
+                    }
+                    catch (Exception ex2)
+                    {
+                        CustomLog.LogError("Faster World compat failed\n" + ex2.ToString());
+                    }
                 }
             }
-            else
+            if (fasterworldextra)
             {
-                try
+                CustomLog.Log("Faster World Extra apply" + (GSL ? " with GSL" : "") + "...");
+                if (GSL)
                 {
-                    ModCompat.FasterWorldStuff.Apply();
+                    try
+                    {
+                        ModCompat.FasterWorldStuff.GSL_Apply_Extra();
+                    }
+                    catch (Exception ex2)
+                    {
+                        CustomLog.LogError("Faster World Extra compat with GSL failed\n" + ex2.ToString());
+                    }
                 }
-                catch (Exception ex2)
+                else
                 {
-                    CustomLog.LogError("Faster World compat failed\n" + ex2.ToString());
-                }
-            }
-        }
-        if (FGTools.IsModActive("gelbi.faster-world-extra"))
-        {
-            if (FGTools.IsModActive("0gelbi.silly-lib"))
-            {
-                try
-                {
-                    ModCompat.FasterWorldStuff.GSL_Apply_Extra();
-                }
-                catch (Exception ex2)
-                {
-                    CustomLog.LogError("Faster World Extra compat with GSL failed\n" + ex2.ToString());
-                }
-            }
-            else
-            {
-                try
-                {
-                    ModCompat.FasterWorldStuff.Apply_Extra();
-                }
-                catch (Exception ex2)
-                {
-                    CustomLog.LogError("Faster World Extra compat failed\n" + ex2.ToString());
+                    try
+                    {
+                        ModCompat.FasterWorldStuff.Apply_Extra();
+                    }
+                    catch (Exception ex2)
+                    {
+                        CustomLog.LogError("Faster World Extra compat failed\n" + ex2.ToString());
+                    }
                 }
             }
         }

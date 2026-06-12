@@ -27,37 +27,36 @@ public class FloodgateExtra : BaseUnityPlugin
         {
             Floodgate.World.MergeFixMap.Apply();
         }
-        catch (System.IO.FileNotFoundException)
+        catch (FileNotFoundException)
         {
 
         }
         catch (Exception e)
         {
-            FloodgatePatcher.CustomLog.LogError("MergeFix apply failed\nIf MergeFix is not present, just ignore this\n" + e.ToString());
+            CustomLog.LogError("MergeFix apply failed\nIf MergeFix is not present, just ignore this\n" + e.ToString());
         }
         try
         {
-            ModCompat.beecat.Apply();
+            beecat.Apply();
         }
-        catch (System.IO.FileNotFoundException)
+        catch (FileNotFoundException)
         {
             
         }
         catch (Exception e)
         {
-            FloodgatePatcher.CustomLog.LogError("Beecat apply failed\nIf Beecat is not present, just ignore this\n" + e.ToString());
+            CustomLog.LogError("Beecat apply failed\nIf Beecat is not present, just ignore this\n" + e.ToString());
         }
         try
         {
-            ModCompat.RemixAutoRestarter.Apply_MMF();
+            RemixAutoRestarter.Apply_MMF();
         }
         catch (FileNotFoundException)
         {
         }
         catch (Exception e)
         {
-            FloodgatePatcher.CustomLog.LogError("ManyMenuFixes specific apply failed.\nIf ManyMenuFixes is not present, just ignore this\n" + e.ToString());
+            CustomLog.LogError("ManyMenuFixes specific apply failed.\nIf ManyMenuFixes is not present, just ignore this\n" + e.ToString());
         }
     }
-
 }

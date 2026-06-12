@@ -10,7 +10,7 @@ public static class TurboAssetManager
     public static readonly Dictionary<string, FileCache> PreloadFiles = new(System.StringComparer.OrdinalIgnoreCase);
     public static bool mappingFinished = false;
 
-    internal static void Apply()
+    private static void Apply()
     {
         ModLoader.Hooks.Add(new Hook(typeof(System.IO.File).GetMethod("ReadAllLines", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new System.Type[] { typeof(string) }, null), hook_ReadAllLines_path));
         ModLoader.Hooks.Add(new Hook(typeof(System.IO.File).GetMethod("ReadAllLines", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new System.Type[] { typeof(string), typeof(System.Text.Encoding) }, null), hook_ReadAllLines_path_encoding));

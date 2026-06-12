@@ -42,9 +42,23 @@ public static class Patcher
 
     private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
     {
-        if (ModLoader.debug)
+        try
         {
-            CustomLog.Log("[ASSEMBLY LOAD DEBUG] Assembly: " + args.LoadedAssembly.FullName + "\n Path: " + args.LoadedAssembly.Location ?? "...how is the path null?");
+            ModLoader.LoadedAssemblies.Add(args.LoadedAssembly.FullName);
+        }
+        catch (Exception e)
+        {
+            CustomLog.LogError(e.ToString());
+        }
+        try
+        {
+            if (ModLoader.debug)
+            {
+                CustomLog.Log("[ASSEMBLY LOAD DEBUG] Assembly: " + args.LoadedAssembly.FullName + "\n Path: " + args.LoadedAssembly.Location ?? "...how is the path null?");
+            }
+        }catch(Exception ex)
+        {
+            CustomLog.LogError("[ASSEMBLY LOAD DEBUG] threw an error: " + ex.ToString());
         }
     }
 
