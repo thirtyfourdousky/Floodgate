@@ -24,6 +24,8 @@ public static class CustomMerger
     const string opREPLACE = "REPLACE"; // three parameter line, replaces a specific string under a line that matches the first parameter
     const string opMERGE = "MERGE"; //default, replaces rooms with new connections
 
+    const string kwCUSTOM = "CUSTOM:"; //Custom Condition, runs a bool method if it has been assigned, otherwise line is ignored
+
     public static bool CRSpresent = false;
     public static System.Reflection.Assembly CRS;
 
@@ -59,7 +61,7 @@ public static class CustomMerger
             ILProcessor processor = il.Body.GetILProcessor();
             Instruction stlocv5 = processor.Body.Instructions.LastOrDefault(i => i.MatchStloc(5));
             processor.InsertAfter(stlocv5, processor.Create(OpCodes.Call, processor.Import(typeof(CustomMerger).GetMethod("RealizeCustomMerge", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)))); //why direct import instead of emitdelegate? i dont rember...
-            processor.InsertAfter(stlocv5, processor.Create(OpCodes.Ldloca_S,(byte)5));
+            processor.InsertAfter(stlocv5, processor.Create(OpCodes.Ldloca_S, (byte)5));
             processor.InsertAfter(stlocv5, processor.Create(OpCodes.Ldarg_0));
         }
         catch (Exception ex)
@@ -193,7 +195,7 @@ public static class CustomMerger
 
             FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] Loading custom merge for " + worldName + "\n  Current slugcat: " + playerCharacter + "\n  Current timeline: " + timelinePosition);
             CustomLines current = new(WorldLines);
-            CustomLines mLines = new(RegisteredPaths[worldName.ToUpperInvariant()], timelinePosition, playerCharacter);
+            CustomLines mLines = new(RegisteredPaths[worldName.ToUpperInvariant()], timelinePosition, playerCharacter, self.world);
             FloodgatePatcher.CustomLog.Log("[Floodgate Custom Merger] Lines Loaded:\n" + string.Join("\n  ", mLines.Lines));
             //conditional links
             System.Threading.Tasks.Task conlTask = System.Threading.Tasks.Task.Run(() =>
@@ -224,14 +226,15 @@ public static class CustomMerger
                     DoOperation(ref current.rooms, mLine);
                 }
             });
-            System.Threading.Tasks.Task critTask = System.Threading.Tasks.Task.Run(()=> {
+            System.Threading.Tasks.Task critTask = System.Threading.Tasks.Task.Run(() =>
+            {
                 foreach (string mLine in mLines.creatures)
                 {
                     DoOperation(ref current.creatures, mLine);
                 }
             });
 
-            conlTask.GetAwaiter().GetResult(); roomTask.GetAwaiter().GetResult();critTask.GetAwaiter().GetResult();
+            conlTask.GetAwaiter().GetResult(); roomTask.GetAwaiter().GetResult(); critTask.GetAwaiter().GetResult();
 
             WorldLines = current.Lines;
         }
@@ -355,7 +358,7 @@ public static class CustomMerger
         }
         else if (merge.operand == opMERGE || string.IsNullOrWhiteSpace(merge.operand))
         {
-            string pattern = merge.line.Split(':')[merge.line.StartsWith("LINEAGE")? 1 : 0] + ":";
+            string pattern = merge.line.Split(':')[merge.line.StartsWith("LINEAGE") ? 1 : 0] + ":";
             if (lines.Any(i => i.StartsWith(pattern)))
             {
                 for (int i = 0; i < lines.Count; i++)
@@ -387,7 +390,7 @@ public static class CustomMerger
             wrdCRIT, ..creatures, "END " + wrdCRIT,
             wrdBLK, ..batmigrationblockages, "END " + wrdBLK,
         ];
-        public CustomLines(List<string> paths, string timelinePosition, string characterName)
+        public CustomLines(List<string> paths, string timelinePosition, string characterName, global::World world)
         {
             foreach (string path in paths)
             {
@@ -479,6 +482,28 @@ public static class CustomMerger
                         FloodgatePatcher.CustomLog.LogError("Broken line\n    " + cur + "\n    missing " + (cur.Contains("]") ? "start `[`" : "end `]`") + " operands array pattern");
                         continue;
                     }
+
+                    if (cur.StartsWith(kwCUSTOM))
+                    {
+                        int keyEnd = cur.IndexOf(" ;;; ");
+                        if (keyEnd == -1)
+                        {
+                            FloodgatePatcher.CustomLog.LogError("Broken line condition (missing separator \" ;;; \"):\n  " + cur);
+                            continue;
+                        }
+                        if (CustomConditions.TryGetValue(cur.Substring(7, keyEnd - 7), out CustomCondition condition))
+                        {
+                            if (condition(world))
+                            {
+                                cur = cur.Substring(keyEnd + 5).TrimStart();
+                                goto END;
+                            }
+                        }
+                        continue;
+                    }
+
+                    //line added
+                END:
                     lines.Add(cur);
                 }
                 if (lines.Contains(wrdCLINKS) && lines.Contains("END " + wrdCLINKS))
@@ -534,9 +559,9 @@ public static class CustomMerger
             {
                 return new(line.trimStart(']'), line.trimEnd(']').trimStart('['));
             }
-            else if(line.Contains("[") ^ line.Contains("]"))
+            else if (line.Contains("[") ^ line.Contains("]"))
             {
-                FloodgatePatcher.CustomLog.Log("line error\n" +  line + "\nline contains unclosed operand");
+                FloodgatePatcher.CustomLog.Log("line error\n" + line + "\nline contains unclosed operand");
                 return "";
             }
             else
@@ -652,7 +677,7 @@ public static class CustomMerger
                 bool first = true;
                 foreach (var modcrit in modCreatures)
                 {
-                    line = line + (first? "" : ", ") + modcrit.Key + "-" + modcrit.Value;
+                    line = line + (first ? "" : ", ") + modcrit.Key + "-" + modcrit.Value;
                     first = false;
                 }
             }
@@ -666,7 +691,7 @@ public static class CustomMerger
             Dictionary<string, CritR> crit = new();
             if (type == global::CreatureTemplate.Type.MirosBird)
             {
-                crit[CreatureTemplateType.Blizzor.Name] = new(false,0.5f);
+                crit[CreatureTemplateType.Blizzor.Name] = new(false, 0.5f);
             }
             else if (type == global::CreatureTemplate.Type.Snail)
             {
@@ -823,7 +848,7 @@ public static class CustomMerger
             {
                 crit[CreatureTemplateType.Scrounger.Name] = new(false, 0.5f);
             }
-            else if(type == DLCSharedEnums.CreatureTemplateType.ScavengerElite)
+            else if (type == DLCSharedEnums.CreatureTemplateType.ScavengerElite)
             {
                 crit[CreatureTemplateType.ScavengerSentinel] = new(false, 0.5f);
             }
@@ -873,5 +898,18 @@ public static class CustomMerger
         public int count = count;
         public string customFlag = customFlag;
         public int den = den;
+    }
+
+
+    public delegate bool CustomCondition(global::World world);
+    internal static readonly Dictionary<string, CustomCondition> CustomConditions = new();
+    public static void AddCondition(string key, CustomCondition condition)
+    {
+        if (CustomConditions.TryGetValue(key, out CustomCondition prev))
+        {
+            FloodgatePatcher.CustomLog.Log("[World Loader] WARNING: Custom Condition [" + key + "] already exists, replacing it\n  From: " + prev.Method.DeclaringType.AssemblyQualifiedName + "::" + prev.Method.Name +
+                "; To: " + condition.Method.DeclaringType.AssemblyQualifiedName + "::" + condition.Method.Name + ";");
+        }
+        CustomConditions[key] = condition;
     }
 }

@@ -103,4 +103,11 @@ public static class TurboAssetManager
 	}
 
     public static bool accessfgmerged = false;
+
+
+    //
+    public static void MergeScan()
+    {
+
+    }
 }

@@ -18,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.241";
+    public const string Version = "0.1.25";
 
     public static Plugin? Instance { get; private set; }
 
@@ -239,6 +239,39 @@ public partial class Plugin : BaseUnityPlugin
         else
         {
             TurboAssetManager.Apply();
+        }
+        if (FGTools.IsModActive("preservatory"))
+        {
+            try
+            {
+                ModCompat.Preservatory.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("Preservatory hook failed\n" + e.ToString());
+            }
+        }
+        if (FGTools.IsModActive("randombuff"))
+        {
+            try
+            {
+                ModCompat.RandomBuff.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("randombuff hook failed\n" + e.ToString());
+            }
+        }
+        if (FGTools.IsModActive("randombuff") && FGTools.IsModActive("preservatory"))
+        {
+            try
+            {
+                ModCompat.RandomPreservatory.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("randombuff preservatory comat failed\n" + e.ToString());
+            }
         }
         if (FGTools.IsModActive("yeliah.slugpupFieldtrip") && FGTools.IsModActive("sprobgik.desecratinggraves"))
         {

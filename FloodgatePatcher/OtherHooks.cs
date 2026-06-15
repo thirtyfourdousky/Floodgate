@@ -37,8 +37,8 @@ public static class OtherHooks
     {
         if(!ResolveFilePathApplied && arg1.Name == "ResolveFilePath" && arg1.GetParameters().Length == 3 && arg2.Method.DeclaringType.FullName != "Floodgate.TurboAssetManager")
         {
-            On.AssetManager.ResolveFilePath_string_bool_bool += ResolveFilePathHolder;
             ResolveFilePathApplied = true;
+            On.AssetManager.ResolveFilePath_string_bool_bool += ResolveFilePathHolder;
             CustomLog.Log("[HOOK DEBUG] " + arg1.Name + " - " + arg2.Method.Name);
         }
         return true;

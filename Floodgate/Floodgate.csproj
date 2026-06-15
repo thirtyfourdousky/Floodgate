@@ -111,6 +111,12 @@
     <Reference Include="PUBLIC-WDTGG">
       <HintPath>..\..\..\ASM\1.11\PUBLIC-WDTGG.dll</HintPath>
     </Reference>
+    <Reference Include="PVStuff">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3357751340\newest\plugins\PVStuff.dll</HintPath>
+    </Reference>
+    <Reference Include="RandomBuff">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3305649568\newest\plugins\RandomBuff.dll</HintPath>
+    </Reference>
     <Reference Include="SprobBanana">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3504376213\plugins\SprobBanana.dll</HintPath>
     </Reference>
@@ -142,6 +148,9 @@
     <Compile Include="ModCompat\CRS\IndexedEntranceClass.cs" />
     <Compile Include="ModCompat\FasterWorldStuff.cs" />
     <Compile Include="ModCompat\LastWish.cs" />
+    <Compile Include="ModCompat\Preservatory.cs" />
+    <Compile Include="ModCompat\RandomBuff.cs" />
+    <Compile Include="ModCompat\RandomPreservatory.cs" />
     <Compile Include="ModCompat\RemixAutoRestarter.cs" />
     <Compile Include="Optimization\CRS\RegionProperties.cs" />
     <Compile Include="ModCompat\EmgTxIteratorCreator.cs" />
