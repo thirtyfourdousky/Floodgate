@@ -14,12 +14,14 @@ namespace FloodgateExtra;
 [BepInDependency("bro.fixedmerging", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("bro.mergefix", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("beeworld", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("zombieseatflesh7.MenuFixes", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("Gamer025.RemixAutoRestart", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin(GUID, Name, Version)]
 public class FloodgateExtra : BaseUnityPlugin
 {
     const string Name = "FloodgateExtra";
     const string GUID = "floodgateextra";
-    const string Version = "0.0.1";
+    const string Version = "0.0.2";
 
     public void Awake()
     {
@@ -57,6 +59,17 @@ public class FloodgateExtra : BaseUnityPlugin
         catch (Exception e)
         {
             CustomLog.LogError("ManyMenuFixes specific apply failed.\nIf ManyMenuFixes is not present, just ignore this\n" + e.ToString());
+        }
+        try
+        {
+            RemixAutoRestarter.Apply_AutoRestarter();
+        }
+        catch (FileNotFoundException)
+        {
+        }
+        catch (Exception e)
+        {
+            CustomLog.LogError("Remix Auto Restarter specific apply failed.\nIf Remix Auto Restarter is not present, just ignore this\n" + e.ToString());
         }
     }
 }

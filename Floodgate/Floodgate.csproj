@@ -117,6 +117,9 @@
     <Reference Include="RandomBuff">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3305649568\newest\plugins\RandomBuff.dll</HintPath>
     </Reference>
+    <Reference Include="RemixAutoRestart">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2935290634\plugins\RemixAutoRestart.dll</HintPath>
+    </Reference>
     <Reference Include="SnowyWorld">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3424930016\plugins\SnowyWorld.dll</HintPath>
     </Reference>

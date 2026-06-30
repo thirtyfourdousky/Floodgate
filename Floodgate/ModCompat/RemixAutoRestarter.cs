@@ -15,17 +15,26 @@ public static class RemixAutoRestarter
     internal static readonly List<IDetour> _hooks = new List<IDetour>();
     public static void Apply_MMF()
     {
-        _hooks.Add(new ILHook(typeof(MenuFixes.Mods.RemixAutoRestart).GetMethod("Restart", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static), IL_Restart_MMF));
+        _hooks.Add(new ILHook(typeof(MenuFixes.Mods.RemixAutoRestart).GetMethod("Restart", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static), IL_Restart));
+    }
+    public static void Apply_AutoRestarter()
+    {
+        _hooks.Add(new ILHook(typeof(RemixAutoRestart.RemixAutoRestart).GetMethod("ModdingMenu_Singal", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance), IL_Restart));
     }
 
-    public static void IL_Restart_MMF(ILContext IL)
+    public static void IL_Restart(ILContext IL)
     {
         try
         {
             var startMethodInfo = typeof(System.Diagnostics.Process).GetMethod("Start", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null, new Type[] { typeof(System.Diagnostics.ProcessStartInfo) }, null);
             ILCursor cursor = new(IL);
             //this is defenitely breaking on a update
-            cursor.GotoNext(MoveType.After, x=>x.MatchLdloc(7) && x.Next.MatchCall(startMethodInfo));
+            int local = -1;
+            cursor.GotoNext(MoveType.After, x=>x.MatchLdloc(out local) && x.Next.MatchCall(startMethodInfo));
+            if(local == -1)
+            {
+                throw new KeyNotFoundException("Auto Restarter Process Info local couldn't be found");
+            }
             cursor.Remove();
             cursor.EmitDelegate(EditRestart);
 
@@ -35,8 +44,6 @@ public static class RemixAutoRestarter
             CustomLog.LogError("[MOD COMPAT] Many Menu Fixes autorestarter hook failed\n" + ex);
         }
     }
-
-
 
     public static System.Diagnostics.Process EditRestart(System.Diagnostics.ProcessStartInfo info)
     {
