@@ -18,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.25";
+    public const string Version = "0.1.251";
 
     public static Plugin? Instance { get; private set; }
 
@@ -249,6 +249,17 @@ public partial class Plugin : BaseUnityPlugin
             catch (Exception e)
             {
                 CustomLog.LogError("Preservatory hook failed\n" + e.ToString());
+            }
+        }
+        if (FGTools.IsModActive("SnowBee.Snow"))
+        {
+            try
+            {
+                ModCompat.SnowyWorld.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("Winter's End hook failed\n" + e.ToString());
             }
         }
         if (FGTools.IsModActive("randombuff"))

@@ -23,23 +23,23 @@ public static class Registry
         Mods.Clear();
         foreach (ModManager.Mod mod in ModManager.ActiveMods)
         {
-            if (mod == null || Mods.Any(i=>i.mod.id == mod.id)) { continue; }
+            if (mod == null || (Mods.Any(i=>i.mod.id == mod.id))) { continue; }
             string floodgatepath = mod.TargetedPath + Path.DirectorySeparatorChar + "floodgate";
             if (mod.hasTargetedVersionFolder && Directory.Exists(floodgatepath))
             {
-                Mods.Add(new(floodgatepath, mod));
+                Mods.Insert(0, new(floodgatepath, mod));
                 continue;
             }
             floodgatepath = mod.NewestPath + Path.DirectorySeparatorChar + "floodgate";
             if (FloodgatePatcher.ModLoader.IsLatest && mod.hasNewestFolder && Directory.Exists(floodgatepath))
             {
-                Mods.Add(new(floodgatepath, mod));
+                Mods.Insert(0, new(floodgatepath, mod));
                 continue;
             }
             floodgatepath = mod.path + Path.DirectorySeparatorChar + "floodgate";
             if (Directory.Exists(floodgatepath))
             {
-                Mods.Add(new(floodgatepath, mod));
+                Mods.Insert(0, new(floodgatepath, mod));
             }
         }
     }
