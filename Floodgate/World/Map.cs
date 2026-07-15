@@ -1,11 +1,15 @@
-﻿using Mono.Cecil.Cil;
+﻿using DevInterface;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using RWCustom;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
+using static PVStuffMod.StaticStuff;
 
 namespace Floodgate.World;
 
@@ -14,6 +18,8 @@ public static class Map
     internal static void Apply()
     {
         IL.ModManager.GenerateMergedMods += ModManager_GenerateMergedMods;
+
+        //IL.HUD.Map.Update += Map_Update;
     }
 
     private static void ModManager_GenerateMergedMods(ILContext il)
@@ -113,4 +119,82 @@ public static class Map
             }
         }
     }
+
+
+    /*private static void Map_Update(ILContext il)
+    {
+        try
+        {
+            ILCursor c = new(il);
+
+            bool found = false;
+            while(c.TryGotoNext(x=>x.MatchCallOrCallvirt(typeof(AssetManager), "SafeWWWLoadTexture")))
+            {
+                found = true;
+                c.Remove();
+                c.Emit(OpCodes.Ldarg_0);
+                c.EmitDelegate<delLoadMapTextureOverride>(LoadMapTextureOverride);
+            }
+            if (!found)
+            {
+                throw new KeyNotFoundException("Could not find any calls to SafeWWWLoadTexture on Map.Update");
+            }
+        }
+        catch (Exception ex)
+        {
+            FloodgatePatcher.CustomLog.LogError("[Map \"merging\"] Map rerender apply failed\n" + ex.ToString());
+        }
+    }
+
+    public delegate Texture2D delLoadMapTextureOverride(ref Texture2D texture2D, string path, bool clampWrapMode, bool crispPixels, HUD.Map map);
+    public static Texture2D LoadMapTextureOverride(ref Texture2D texture2D, string _, bool clampWrapMode, bool crispPixels, HUD.Map map)
+    {
+        DevUI fakeui = new(map.mapData.world.game);
+        fakeui.SwitchPage(3);
+        MapPage page = fakeui.activePage as MapPage;
+        page.canonView = true;
+        page.rippleStreamEdit = false;
+        page.NewMode();
+        page.Refresh();
+        page.Update();
+
+        while(page.subNodes.Where(x=>x is RoomPanel).Any(i=>!(i as RoomPanel).miniMap.textureLoaded))
+        {
+
+            foreach(var node in page.subNodes)
+            {
+                node.Update();
+                node.Refresh();
+                if(node is RoomPanel roompanel && !roompanel.miniMap.textureLoaded)
+                {
+                    roompanel
+                }
+            }
+            page.Update();
+            page.Refresh();
+            fakeui.Update();
+        }
+
+        page.subNodes.Add(page.renderOutput = new MapRenderOutput(page.owner, page.world, "Render_Output", page, new Vector2(20f, 20f), "Rendered Map", page));
+        page.Refresh();
+        page.Update();
+
+        texture2D.wrapMode = ((!clampWrapMode) ? TextureWrapMode.Repeat : TextureWrapMode.Clamp);
+        if (crispPixels)
+        {
+            texture2D.anisoLevel = 0;
+            texture2D.filterMode = FilterMode.Point;
+        }
+
+        Texture2D texture2 = new(page.renderOutput.texture.width, page.renderOutput.texture.height);
+        texture2.SetPixels32(page.renderOutput.texture.GetPixels32());
+        texture2.Apply(false);
+
+        texture2D.LoadImage(texture2.EncodeToPNG());
+        UnityEngine.Object.Destroy(texture2);
+
+        texture2D = page.renderOutput.texture;
+        fakeui.ClearSprites();
+        return texture2D;
+    }*/
 }
