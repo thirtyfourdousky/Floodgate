@@ -27,7 +27,7 @@ public static class LunacyTokens
             {
                 ILLabel label = c.DefineLabel();
                 c.Emit(OpCodes.Ldloc_0);
-                c.EmitDelegate((RainWorld rainworld)=>
+                c.EmitDelegate(static (RainWorld rainworld)=>
                 {
                     return rainworld.progression.currentSaveState is null;
                 });

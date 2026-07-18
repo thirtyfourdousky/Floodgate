@@ -48,6 +48,6 @@ public static class SnowyWorld
 
     public static int Native_RainCycle_GetDesiredCycleLength(On.RainCycle.orig_GetDesiredCycleLength orig, RainCycle self)
     {
-        return (self.world is not null && self.world.game.IsStorySession && self.world.region.name == "Z5") ? 99999 : orig(self);
+        return (self.world is not null && self.world.game is not null && self.world.game.IsStorySession && self.world.region.name == "Z5") ? 99999 : orig(self);
     }
 }

@@ -16,12 +16,13 @@ namespace FloodgateExtra;
 [BepInDependency("beeworld", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("zombieseatflesh7.MenuFixes", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("Gamer025.RemixAutoRestart", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("NCR.theunbound", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin(GUID, Name, Version)]
 public class FloodgateExtra : BaseUnityPlugin
 {
     const string Name = "FloodgateExtra";
     const string GUID = "floodgateextra";
-    const string Version = "0.0.2";
+    const string Version = "0.0.3";
 
     public void Awake()
     {
@@ -70,6 +71,17 @@ public class FloodgateExtra : BaseUnityPlugin
         catch (Exception e)
         {
             CustomLog.LogError("Remix Auto Restarter specific apply failed.\nIf Remix Auto Restarter is not present, just ignore this\n" + e.ToString());
+        }
+        try
+        {
+            ModCompat._Unbound.DisableUnregister.Apply();
+        }
+        catch (FileNotFoundException)
+        {
+        }
+        catch (Exception e)
+        {
+            CustomLog.LogError("Unbound specific apply failed.\nIf Unbound is not present, just ignore this\n" + e.ToString());
         }
     }
 }

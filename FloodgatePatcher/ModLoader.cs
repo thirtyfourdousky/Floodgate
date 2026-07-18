@@ -379,7 +379,7 @@ public static class ModLoader
             if (c.TryGotoNext(MoveType.After, i => i.MatchNop()))
             {
                 c.Emit(Mono.Cecil.Cil.OpCodes.Ldloca_S, (byte)1);
-                c.EmitDelegate(delegate (ref string text2)
+                c.EmitDelegate(static delegate (ref string text2)
                 {
                     if (OverrideAssembly(text2, AssemblyName.GetAssemblyName(text2), out string asmOverride))
                     {
@@ -444,7 +444,7 @@ public static class ModLoader
             ILCursor c = new(context);
             c.Goto(0);
             c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
-            c.EmitDelegate(delegate (string path)
+            c.EmitDelegate(static delegate (string path)
             {
                 CustomLog.Log("[DEBUG] Trying to load Assembly from path: " + path + "\n" + Environment.StackTrace);
             });

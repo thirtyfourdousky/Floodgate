@@ -18,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.252";
+    public const string Version = "0.1.26";
 
     public static Plugin? Instance { get; private set; }
 
@@ -60,7 +60,7 @@ public partial class Plugin : BaseUnityPlugin
             ILCursor c = new ILCursor(il);
 
             c.GotoNext(MoveType.After, x => x.MatchCallvirt(typeof(System.Reflection.Assembly).GetProperty("Location", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | BindingFlags.Instance).GetGetMethod()));
-            c.EmitDelegate<Func<string,string>>(delegate (string assemblyPath)
+            c.EmitDelegate<Func<string,string>>(static delegate (string assemblyPath)
             {
                 if(ModLoader.OverridenAssembliesPaths.TryGetValue(assemblyPath, out string realPath))
                 {
@@ -72,7 +72,7 @@ public partial class Plugin : BaseUnityPlugin
             c.GotoNext(x => x.MatchLdloc(0), x => x.MatchLdfld(out displayclass), x => x.MatchLdfld("Options", "modChecksums"), x => x.MatchCallvirt(out var value) && value.Name == "Clear");
             c.Emit(OpCodes.Ldloc_0);
             c.Emit(OpCodes.Ldfld, displayclass);
-            c.EmitDelegate(delegate (Options options)
+            c.EmitDelegate(static delegate (Options options)
             {
                 //disable mods with missing dependencies
                 HashSet<string> allenabledmods = new(StringComparer.OrdinalIgnoreCase);

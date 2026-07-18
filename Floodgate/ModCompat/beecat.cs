@@ -31,7 +31,7 @@ public static class beecat
             c.Goto(0);
             c.Instrs.Clear();
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate(delegate (ILContext iil)
+            c.EmitDelegate(static delegate (ILContext iil)
             {
                 ILCursor cursor = new ILCursor(iil);
                 try
@@ -44,7 +44,7 @@ public static class beecat
                         (Instruction x) => x.MatchLdfld("AbstractCreature","creatureTemplate") && x.Next.MatchLdfld("CreatureTemplate","ghostSedationImmune")
                         );
                     cursor.Remove();
-                    cursor.EmitDelegate(delegate(CreatureTemplate template) { return (template.ghostSedationImmune || template.type == BeeEnums.CreatureType.Bup); });
+                    cursor.EmitDelegate(static delegate(CreatureTemplate template) { return (template.ghostSedationImmune || template.type == BeeEnums.CreatureType.Bup); });
                     FloodgatePatcher.CustomLog.LogError("beecat hook success");
                 }
                 catch (Exception e)

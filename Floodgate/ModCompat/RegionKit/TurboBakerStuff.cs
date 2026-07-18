@@ -48,7 +48,7 @@ public static class TurboBakerStuff
         {
             ILCursor c = new(il);
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate(delegate (TurboBakerTab self)
+            c.EmitDelegate(static delegate (TurboBakerTab self)
             {
                 if (self is not FGTurboBakerTab fgtab)
                 {
@@ -78,7 +78,7 @@ public static class TurboBakerStuff
         {
             ILCursor c = new(il);
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate(delegate (TurboBakerTab self)
+            c.EmitDelegate(static delegate (TurboBakerTab self)
             {
                 if(self is not FGTurboBakerTab fgtab)
                 {

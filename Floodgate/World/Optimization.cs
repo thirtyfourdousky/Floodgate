@@ -49,7 +49,7 @@ public static class Optimization
             if (c.TryGotoNext(MoveType.After, x => x.MatchLdloc(10) && x.Next.MatchLdstr("Room Setting Templates")))
             {
                 c.RemoveRange(2);
-                c.EmitDelegate((string load) => { return lastLoadingContext != WARPMAPLOADING && load == "Room Setting Templates"; });
+                c.EmitDelegate(static (string load) => { return lastLoadingContext != WARPMAPLOADING && load == "Room Setting Templates"; });
             }
             else
             {
@@ -72,7 +72,12 @@ public static class Optimization
                 object label = c.Next.Next.Next.Operand;
                 object extenumEq = c.Next.Next.Operand;
                 object loadcontext = c.Prev.Operand;
-                c.EmitDelegate(() => { return WARPMAPLOADING; });
+
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.FieldRef(typeof(Optimization), "WARPMAPLOADING"));
+                InlineIL.IL.Pop(out RuntimeFieldHandle wmlhandle);
+                var warmpmapfield = il.Import(System.Reflection.FieldInfo.GetFieldFromHandle(wmlhandle));
+                //c.EmitDelegate(static () => { return WARPMAPLOADING; });
+                c.Emit(OpCodes.Ldsfld, warmpmapfield);
                 c.Emit(OpCodes.Call, extenumEq);
                 c.Emit(OpCodes.Brtrue_S, label);
                 c.Emit(OpCodes.Ldarg_0);
@@ -99,7 +104,12 @@ public static class Optimization
                 object label = c.Next.Next.Next.Operand;
                 object extenumIneq = c.Next.Next.Operand;
                 object loadcontext = c.Prev.Operand;
-                c.EmitDelegate(() => { return WARPMAPLOADING; });
+
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.FieldRef(typeof(Optimization), "WARPMAPLOADING"));
+                InlineIL.IL.Pop(out RuntimeFieldHandle wmlhandle);
+                var warmpmapfield = il.Import(System.Reflection.FieldInfo.GetFieldFromHandle(wmlhandle));
+                //c.EmitDelegate(static () => { return WARPMAPLOADING; });
+                c.Emit(OpCodes.Ldsfld, warmpmapfield);
                 c.Emit(OpCodes.Call, extenumIneq);
                 c.Emit(OpCodes.Brfalse_S, label);
                 c.Emit(OpCodes.Ldarg_0);
@@ -124,7 +134,11 @@ public static class Optimization
             if(c.TryGotoNext(MoveType.Before,x=>x.MatchLdsfld<global::WorldLoader.LoadingContext>("FASTTRAVEL")))
             {
                 c.Remove();
-                c.EmitDelegate(() => { return WARPMAPLOADING; });
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.FieldRef(typeof(Optimization), "WARPMAPLOADING"));
+                InlineIL.IL.Pop(out RuntimeFieldHandle wmlhandle);
+                var warmpmapfield = il.Import(System.Reflection.FieldInfo.GetFieldFromHandle(wmlhandle));
+                //c.EmitDelegate(static () => { return WARPMAPLOADING; });
+                c.Emit(OpCodes.Ldsfld, warmpmapfield);
             }
             else
             {

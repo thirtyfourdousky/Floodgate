@@ -35,7 +35,7 @@ public static class MergeFixMap
                 {
                     label.Target = c.Prev;
                 }
-                c.EmitDelegate(delegate (string MergedMods)
+                c.EmitDelegate(static delegate (string MergedMods)
                 {
                     //literally vanilla (no DLC)
                     string VanillaWorldPath = (RWCustom.Custom.RootFolderDirectory() + Path.DirectorySeparatorChar + "World");
@@ -88,15 +88,20 @@ public static class MergeFixMap
         try
         {
             ILCursor c = new(il);
+            InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(MergeFixMap), "SafeCopy"));
+            InlineIL.IL.Pop(out RuntimeMethodHandle copyhandle);
+            var _Safecopy = il.Import(System.Reflection.MethodBase.GetMethodFromHandle(copyhandle));
             if (c.TryGotoNext(MoveType.Before, x => x.MatchCall(typeof(File).GetMethod("Copy", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static| System.Reflection.BindingFlags.NonPublic, null, new Type[] {typeof(string), typeof(string), typeof(bool)}, null))))
             {
-                IEnumerable<ILLabel> labels = c.IncomingLabels;
-                c.EmitDelegate(SafeCopy);
-                c.Remove();
-                foreach(ILLabel label in labels)
-                {
-                    label.Target = c.Prev;
-                }
+                c.Next.OpCode = OpCodes.Call;
+                c.Next.Operand = _Safecopy;
+                //IEnumerable<ILLabel> labels = c.IncomingLabels;
+                //c.EmitDelegate(SafeCopy);
+                //c.Remove();
+                //foreach(ILLabel label in labels)
+                //{
+                //    label.Target = c.Prev;
+                //}
             }
             else
             {

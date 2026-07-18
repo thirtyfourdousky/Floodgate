@@ -28,16 +28,21 @@ public static class BackgroundBuilder_Data
                 CustomLog.Log("[Mod Compat] RegionKit BackgroundBuilder.Data RoomSettings_Load failed");
             }
             int count = 0;
-            for(int i = 0; i < targets.Count; i++)
+            InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(BackgroundBuilder_Data), "REsplitToStringSplit"));
+            InlineIL.IL.Pop(out RuntimeMethodHandle splitHandle);
+            var _SplitMethod = context.Import(System.Reflection.MethodBase.GetMethodFromHandle(splitHandle));
+            for (int i = 0; i < targets.Count; i++)
             {
                 c.Goto(targets[i]);
-                IEnumerable<ILLabel> labels = c.IncomingLabels;
-                c.Remove();
-                c.EmitDelegate(REsplitToStringSplit);
-                foreach (ILLabel label in labels)
-                {
-                    label.Target = c.Prev;
-                }
+                //IEnumerable<ILLabel> labels = c.IncomingLabels;
+                //c.Remove();
+                c.Next.OpCode = OpCodes.Call;
+                c.Next.Operand = _SplitMethod;
+                //c.EmitDelegate(REsplitToStringSplit);
+                //foreach (ILLabel label in labels)
+                //{
+                //    label.Target = c.Prev;
+                //}
                 count++;
             }
             CustomLog.Log("[Mod Compat] RegionKit BackgroundBuilder.Data RoomSettings_Load replaced " + count + " instructions");

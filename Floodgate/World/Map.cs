@@ -37,7 +37,7 @@ public static class Map
                 {
                     label.Target = c.Prev;
                 }
-                c.EmitDelegate(delegate (string MergedMods)
+                c.EmitDelegate(static delegate (string MergedMods)
                 {
                     //literally vanilla (no DLC)
                     string VanillaWorldPath = (RWCustom.Custom.RootFolderDirectory() + Path.DirectorySeparatorChar + "World");

@@ -1,4 +1,5 @@
 ﻿using FloodgatePatcher;
+using ModCompat.RegionKit;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
@@ -25,16 +26,22 @@ public static class UnRegEx
                 CustomLog.Log("[UnRegEx] no regex calls on method " + IL.Method.FullName);
             }
             int count = 0;
+            InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(UnRegEx), "internalsplit"));
+            InlineIL.IL.Pop(out RuntimeMethodHandle splitHandle);
+            var SplitMethod = IL.Import(System.Reflection.MethodBase.GetMethodFromHandle(splitHandle));
             for (int i = 0; i < targets.Count; i++)
             {
                 c.Goto(targets[i]);
-                IEnumerable<ILLabel> labels = c.IncomingLabels;
-                c.Remove();
-                c.EmitDelegate(internalsplit);
-                foreach(ILLabel label in labels)
-                {
-                    label.Target = c.Prev;
-                }
+                c.Next.OpCode = OpCodes.Call;
+                c.Next.Operand = SplitMethod;
+
+                //IEnumerable<ILLabel> labels = c.IncomingLabels;
+                //c.Remove();
+                //c.EmitDelegate(internalsplit);
+                //foreach(ILLabel label in labels)
+                //{
+                //    label.Target = c.Prev;
+                //}
                 count++;
             }
             CustomLog.Log("[UnRegEx] replaced " + count + " instructions on " + IL.Method.FullName);

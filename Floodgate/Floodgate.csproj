@@ -129,6 +129,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Unbound">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3262661679\plugins\Unbound.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\UnityEngine.dll</HintPath>
@@ -163,6 +166,7 @@
     <Compile Include="ModCompat\RandomPreservatory.cs" />
     <Compile Include="ModCompat\RemixAutoRestarter.cs" />
     <Compile Include="ModCompat\SnowyWorld.cs" />
+    <Compile Include="ModCompat\Unbound\DisableUnregister.cs" />
     <Compile Include="Optimization\CRS\RegionProperties.cs" />
     <Compile Include="ModCompat\EmgTxIteratorCreator.cs" />
     <Compile Include="ModCompat\LBspecific.cs" />
@@ -176,6 +180,7 @@
     <Compile Include="NotEnums\CreatureTemplateType.cs" />
     <Compile Include="NotEnums\EnabledMods.cs" />
     <Compile Include="World\Map.cs" />
+    <Compile Include="World\MapRender.cs" />
     <Compile Include="World\MergeFixMap.cs" />
     <Compile Include="World\Optimization.cs" />
     <Compile Include="_Modules\DevTools\Objects\ObjectsMenu.cs" />

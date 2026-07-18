@@ -60,7 +60,7 @@ public static class CustomMerger
         {
             ILProcessor processor = il.Body.GetILProcessor();
             Instruction stlocv5 = processor.Body.Instructions.LastOrDefault(i => i.MatchStloc(5));
-            processor.InsertAfter(stlocv5, processor.Create(OpCodes.Call, processor.Import(typeof(CustomMerger).GetMethod("RealizeCustomMerge", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)))); //why direct import instead of emitdelegate? i dont rember...
+            processor.InsertAfter(stlocv5, processor.Create(OpCodes.Call, processor.Import(typeof(CustomMerger).GetMethod("RealizeCustomMerge", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))));
             processor.InsertAfter(stlocv5, processor.Create(OpCodes.Ldloca_S, (byte)5));
             processor.InsertAfter(stlocv5, processor.Create(OpCodes.Ldarg_0));
         }

@@ -1,10 +1,13 @@
 ﻿using FloodgatePatcher;
+using ModCompat.RegionKit;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,8 +38,14 @@ public static class RemixAutoRestarter
             {
                 throw new KeyNotFoundException("Auto Restarter Process Info local couldn't be found");
             }
-            cursor.Remove();
-            cursor.EmitDelegate(EditRestart);
+            InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(RemixAutoRestarter), "EditRestart"));
+            InlineIL.IL.Pop(out RuntimeMethodHandle editRestartHandle);
+            var _EditRestart = IL.Import(System.Reflection.MethodBase.GetMethodFromHandle(editRestartHandle));
+            cursor.Next.OpCode = OpCodes.Call;
+            cursor.Next.Operand = _EditRestart;
+
+            //cursor.Remove();
+            //cursor.EmitDelegate(EditRestart);
 
         }
         catch (Exception ex)

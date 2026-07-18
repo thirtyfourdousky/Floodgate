@@ -24,7 +24,7 @@ public static class NotScugPlaySpupSafari
                 c.Goto(11);
                 c.RemoveRange(3);
                 c.Emit(OpCodes.Ldarg_2);
-                c.EmitDelegate((RoomCamera.SpriteLeaser sLeaser, PlayerGraphics playerGraphics) =>
+                c.EmitDelegate(static (RoomCamera.SpriteLeaser sLeaser, PlayerGraphics playerGraphics) =>
                 {
                     if (SprobDesecratingGraves.Main.isRotPlayer(playerGraphics.player))
                     {

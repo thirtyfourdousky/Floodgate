@@ -1,4 +1,5 @@
 ﻿using FloodgatePatcher;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
@@ -42,12 +43,18 @@ public static class Hooks
             ILCursor c = new(il);
             if (c.TryGotoNext(MoveType.After, x => x.MatchLdloc(1) && x.Previous.MatchStloc(2) && x.Next.Next.MatchLdarg(0)))
             {
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloc_0);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloca_S, (byte)1);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloca_S, (byte)3);
-                c.EmitDelegate(PlayerThreatTrackerUpdateLogic);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloc_1);
+                c.Emit(OpCodes.Ldarg_0);
+                c.Emit(OpCodes.Ldloc_0);
+                c.Emit(OpCodes.Ldloca_S, (byte)1);
+                c.Emit(OpCodes.Ldloca_S, (byte)3);
+
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(Hooks), "PlayerThreatTrackerUpdateLogic"));
+                InlineIL.IL.Pop(out RuntimeMethodHandle PlayerThreatTrackerUpdateLogicHandle);
+                var _PlayerThreatTrackerUpdateLogic = il.Import(System.Reflection.MethodBase.GetMethodFromHandle(PlayerThreatTrackerUpdateLogicHandle));
+                c.Emit(OpCodes.Call, _PlayerThreatTrackerUpdateLogic);
+                //c.EmitDelegate(PlayerThreatTrackerUpdateLogic);
+
+                c.Emit(OpCodes.Ldloc_1);
             }
             else
             {
@@ -125,10 +132,15 @@ public static class Hooks
             ILCursor c = new(il);
             if (c.TryGotoNext(MoveType.After, x => x.MatchLdloc(0) && x.Previous.MatchStloc(0) && x.Next.Next.Next.MatchCallvirt<UpdatableAndDeletable>("Destroy")))
             {
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloca_S, (byte)0);
-                c.EmitDelegate(GhostCreatureSedaterUpdateLogic);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloc_0);
+                c.Emit(OpCodes.Ldarg_0);
+                c.Emit(OpCodes.Ldloca_S, (byte)0);
+
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(Hooks), "GhostCreatureSedaterUpdateLogic"));
+                InlineIL.IL.Pop(out RuntimeMethodHandle GhostCreatureSedaterUpdateLogicHandle);
+                var _GhostCreatureSedaterUpdateLogic = il.Import(System.Reflection.MethodBase.GetMethodFromHandle(GhostCreatureSedaterUpdateLogicHandle));
+                c.Emit(OpCodes.Call, _GhostCreatureSedaterUpdateLogic);
+                //c.EmitDelegate(GhostCreatureSedaterUpdateLogic);
+                c.Emit(OpCodes.Ldloc_0);
             }
             else
             {
@@ -163,9 +175,15 @@ public static class Hooks
             ILCursor c = new(il);
             if (c.TryGotoNext(MoveType.After, x => x.MatchLdarg(0) && x.Next.MatchLdloc(0) && x.Next.Next.MatchCall<GoldFlakes>("NumberOfFlakes")))
             {
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloca_S, (byte)0);
-                c.EmitDelegate(GoldFlakesUpdateLogic);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
+                c.Emit(OpCodes.Ldloca_S, (byte)0);
+
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(Hooks), "GoldFlakesUpdateLogic"));
+                InlineIL.IL.Pop(out RuntimeMethodHandle GoldFlakesUpdateLogicHandle);
+                var _GoldFlakesUpdateLogic = il.Import(System.Reflection.MethodBase.GetMethodFromHandle(GoldFlakesUpdateLogicHandle));
+                c.Emit(OpCodes.Call, _GoldFlakesUpdateLogic);
+
+                //c.EmitDelegate(GoldFlakesUpdateLogic);
+                c.Emit(OpCodes.Ldarg_0);
             }
             else
             {
@@ -196,10 +214,15 @@ public static class Hooks
             ILCursor c = new(il);
             if (c.TryGotoNext(MoveType.After, x => x.MatchLdarg(0) && x.Next.MatchNewobj<List<GoldFlakes.GoldFlake>>()))
             {
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_1);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloca_S, (byte)0);
-                c.EmitDelegate(GoldFlakesctorLogic);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
+                c.Emit(OpCodes.Ldarg_1);
+                c.Emit(OpCodes.Ldloca_S, (byte)0);
+
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(Hooks), "GoldFlakesctorLogic"));
+                InlineIL.IL.Pop(out RuntimeMethodHandle GoldFlakesctorLogicHandle);
+                var _GoldFlakesctorLogic = il.Import(System.Reflection.MethodBase.GetMethodFromHandle(GoldFlakesctorLogicHandle));
+                c.Emit(OpCodes.Call, _GoldFlakesctorLogic);
+                //c.EmitDelegate(GoldFlakesctorLogic);
+                c.Emit(OpCodes.Ldarg_0);
             }
             else
             {
@@ -233,8 +256,12 @@ public static class Hooks
             ILCursor c = new(il);
             if (c.TryGotoNext(MoveType.After, x => x.MatchLdarg(0) && x.Next.MatchLdfld<Room>("insectCoordinator") && x.Next.Next.MatchBrfalse(out _)))
             {
-                c.EmitDelegate(RoomNowViewedLogic);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(Hooks), "RoomNowViewedLogic"));
+                InlineIL.IL.Pop(out RuntimeMethodHandle RoomNowViewedLogicHandle);
+                var _RoomNowViewedLogic = il.Import(System.Reflection.MethodBase.GetMethodFromHandle(RoomNowViewedLogicHandle));
+                c.Emit(OpCodes.Call, _RoomNowViewedLogic);
+                //c.EmitDelegate(RoomNowViewedLogic);
+                c.Emit(OpCodes.Ldarg_0);
             }
             else
             {
@@ -279,11 +306,16 @@ public static class Hooks
             if (c.TryGotoNext(MoveType.After,x => x.MatchStloc(0)))
             {
                 ILLabel label = c.DefineLabel();
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloc_0);
-                c.EmitDelegate(AddFlyToSwarmRoomLogic);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Brfalse_S, label);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ret);
+                c.Emit(OpCodes.Ldarg_0);
+                c.Emit(OpCodes.Ldloc_0);
+
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(Hooks), "AddFlyToSwarmRoomLogic"));
+                InlineIL.IL.Pop(out RuntimeMethodHandle AddFlyToSwarmRoomLogicHandle);
+                var _AddFlyToSwarmRoomLogic = il.Import(System.Reflection.MethodBase.GetMethodFromHandle(AddFlyToSwarmRoomLogicHandle));
+                c.Emit(OpCodes.Call, _AddFlyToSwarmRoomLogic);
+                //c.EmitDelegate(AddFlyToSwarmRoomLogic);
+                c.Emit(OpCodes.Brfalse_S, label);
+                c.Emit(OpCodes.Ret);
                 c.MarkLabel(label);
             }
             else
@@ -348,11 +380,16 @@ public static class Hooks
             if (c.TryGotoNext(MoveType.After, x => x.MatchStloc(2) && x.Next.MatchLdloc(2) && x.Next.Next.MatchLdcR4(0)))
             {
                 IEnumerable<ILLabel> labels = c.IncomingLabels;
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_1);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloc_0);
-                c.Emit(Mono.Cecil.Cil.OpCodes.Ldloca_S, (byte)2);
-                c.EmitDelegate(ThreatDeterminationLogic);
+                c.Emit(OpCodes.Ldarg_0);
+                c.Emit(OpCodes.Ldarg_1);
+                c.Emit(OpCodes.Ldloc_0);
+                c.Emit(OpCodes.Ldloca_S, (byte)2);
+
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(Hooks), "ThreatDeterminationLogic"));
+                InlineIL.IL.Pop(out RuntimeMethodHandle ThreatDeterminationLogicHandle);
+                var _ThreatDeterminationLogic = il.Import(System.Reflection.MethodBase.GetMethodFromHandle(ThreatDeterminationLogicHandle));
+                c.Emit(OpCodes.Call, _ThreatDeterminationLogic);
+                //c.EmitDelegate(ThreatDeterminationLogic);
                 //c.Emit(Mono.Cecil.Cil.OpCodes.Stloc_2);
                 c.GotoPrev(MoveType.Before, x => x.MatchLdarg(0));
                 foreach (ILLabel label in labels)

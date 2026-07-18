@@ -82,7 +82,11 @@ public static class TurboAssetManager
 				object addOperand = c.Next.Next.Next.Next.Next.Operand;
 				object pathcombineOperand = c.Next.Next.Next.Next.Operand;
 				object RootFolderDir = c.Next.Next.Operand;
-                c.EmitDelegate(() => { return accessfgmerged; });
+                InlineIL.IL.Emit.Ldtoken(new InlineIL.FieldRef(typeof(TurboAssetManager), "accessfgmerged"));
+                InlineIL.IL.Pop(out System.RuntimeFieldHandle accessfgmergedhandle);
+                var _accessfgmerged = il.Import(System.Reflection.FieldInfo.GetFieldFromHandle(accessfgmergedhandle));
+                c.Emit(OpCodes.Ldsfld, _accessfgmerged);
+                //c.EmitDelegate(static () => { return accessfgmerged; });
 				c.Emit(OpCodes.Brfalse_S, label);
 				c.Emit(OpCodes.Ldloc_2);
 				c.Emit(OpCodes.Call, RootFolderDir);
