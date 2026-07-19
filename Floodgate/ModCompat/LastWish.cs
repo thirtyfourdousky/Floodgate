@@ -1,37 +1,83 @@
-﻿using MonoMod.Cil;
+﻿using FloodgatePatcher;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using VoidTemplate.ModsCompatibilty;
 
 namespace ModCompat;
 
-public static class LastWish
+public static class _LastWish
 {
     public static void Apply()
     {
-        InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(new InlineIL.TypeRef("VoidTemplate", "VoidTemplate._Plugin"), "RainWorld_PostModsInit"));
+        InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(VoidTemplate.ModsCompatibilty._ModsMeta), "PostModsInit"));
         InlineIL.IL.Pop<RuntimeMethodHandle>(out RuntimeMethodHandle handle);
-        HookEndpointManager.Modify(MethodBase.GetMethodFromHandle(handle), RemoveIncompats);
+        HookEndpointManager.Add(MethodBase.GetMethodFromHandle(handle), Handler);
     }
 
-    public static void RemoveIncompats(ILContext IL)
+    public static void Handler(Action _)
+    {
+        foreach (ModManager.Mod mod in ModManager.ActiveMods)
+        {
+            try
+            {
+                switch (mod.id)
+                {
+                    case "blood":
+                        Blood.Init();
+                        break;
+                    case "mosquitoes":
+                        MosquitoCompat.Init();
+                        break;
+                    case "swalloweverything":
+                        Floodgate.Plugin.logger.LogError("Please note that Swallow Everything is incompatible with Last Wish, floodgate just disables the error because reenabling the mods sucks");
+                        break;
+                    case "willowwisp.bellyplus":
+                        RotundWorldApplyHolder();
+                        break;
+                }
+            }catch (Exception ex)
+            {
+                CustomLog.LogError("Some of Last Wish's compat failed. Failed mod: " + ((mod?.id) ?? "null" + "\n" + ex));
+            }
+        }
+    }
+    static On.Player.hook_AddFood BPLWAddFood;
+    static On.Player.hook_GrabUpdate BPLWGrabUpdate;
+    public static void RotundWorldApplyHolder()
     {
         try
         {
-            ILCursor c = new ILCursor(IL);
-            InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(VoidTemplate.ModsCompatibilty._ModsMeta), "PostModsInit"));
-            InlineIL.IL.Pop<RuntimeMethodHandle>(out RuntimeMethodHandle incompatHandle);
-            MethodBase incompatMethod = MethodBase.GetMethodFromHandle(incompatHandle);
-            c.GotoNext(MoveType.Before, x => x.MatchCall(incompatMethod));
-            c.Remove();
+            RotundWorldApply();
+        }
+        catch (System.IO.FileNotFoundException) { }
+        catch (Exception ex)
+        {
+            CustomLog.LogError("(external) Rotund World - Last Wish compat failed\n"+ex);
+        }
+    }
+    public static void RotundWorldApply()
+    {
+        try
+        {
+            InlineIL.IL.Emit.Ldnull();
+            InlineIL.IL.Emit.Ldftn(new(typeof(RotundWorld.BPLastWishFixes), "Player_AddFood"));
+            InlineIL.IL.Emit.Newobj(new(typeof(On.Player.hook_AddFood), ".ctor"));
+            InlineIL.IL.Emit.Stsfld(new(typeof(_LastWish), "BPLWAddFood"));
+
+            InlineIL.IL.Emit.Ldnull();
+            InlineIL.IL.Emit.Ldftn(new(typeof(RotundWorld.BPLastWishFixes), "Player_GrabUpdate"));
+            InlineIL.IL.Emit.Newobj(new(typeof(On.Player.hook_GrabUpdate), ".ctor"));
+            InlineIL.IL.Emit.Stsfld(new(typeof(_LastWish), "BPLWGrabUpdate"));
+
+            On.Player.AddFood += BPLWAddFood;
+            On.Player.GrabUpdate += BPLWGrabUpdate;
         }
         catch (Exception ex)
         {
-            FloodgatePatcher.CustomLog.LogError("[LastWish] failed to remove incompatibilities\n" + ex.ToString());
+            CustomLog.LogError("Rotund World - Last Wish compat failed\n" + ex);
         }
     }
 }

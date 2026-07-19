@@ -364,11 +364,22 @@ public partial class Plugin : BaseUnityPlugin
         {
             try
             {
-                ModCompat.LastWish.Apply();
+                ModCompat._LastWish.Apply();
             }
             catch (Exception e)
             {
                 CustomLog.LogError("LastWish apply failed\n" + e.ToString());
+            }
+        }
+        if (FGTools.IsModActive("willowwisp.bellyplus"))
+        {
+            try
+            {
+                ModCompat._RotundWorld.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("Rotund World apply failed\n" + e.ToString());
             }
         }
         //before orig

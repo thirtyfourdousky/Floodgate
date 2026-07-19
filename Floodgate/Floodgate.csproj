@@ -38,6 +38,9 @@
     <Reference Include="BeeWorld">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2939738770\newest\plugins\BeeWorld.dll</HintPath>
     </Reference>
+    <Reference Include="BellyPlus">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2928004252\newest\plugins\BellyPlus.dll</HintPath>
+    </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
@@ -165,6 +168,7 @@
     <Compile Include="ModCompat\RandomBuff.cs" />
     <Compile Include="ModCompat\RandomPreservatory.cs" />
     <Compile Include="ModCompat\RemixAutoRestarter.cs" />
+    <Compile Include="ModCompat\RotundWorld.cs" />
     <Compile Include="ModCompat\SnowyWorld.cs" />
     <Compile Include="ModCompat\Unbound\DisableUnregister.cs" />
     <Compile Include="Optimization\CRS\RegionProperties.cs" />
@@ -215,6 +219,7 @@
   <ItemGroup>
     <Folder Include="ExHooks\FHook\" />
     <Folder Include="ExHooks\FIL\" />
+    <Folder Include="ModCompat\RotundWorld\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.6.9.3\build\Fody.targets" Condition="Exists('..\packages\Fody.6.9.3\build\Fody.targets')" />
