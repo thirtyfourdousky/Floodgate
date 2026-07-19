@@ -17,6 +17,8 @@ namespace FloodgateExtra;
 [BepInDependency("zombieseatflesh7.MenuFixes", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("Gamer025.RemixAutoRestart", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("NCR.theunbound", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("exist.reremix", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("emeralds_features", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin(GUID, Name, Version)]
 public class FloodgateExtra : BaseUnityPlugin
 {
@@ -44,7 +46,7 @@ public class FloodgateExtra : BaseUnityPlugin
         }
         catch (FileNotFoundException)
         {
-            
+
         }
         catch (Exception e)
         {
@@ -82,6 +84,29 @@ public class FloodgateExtra : BaseUnityPlugin
         catch (Exception e)
         {
             CustomLog.LogError("Unbound specific apply failed.\nIf Unbound is not present, just ignore this\n" + e.ToString());
+        }
+
+        try
+        {
+            EmeraldTweaks.Apply();
+        }
+        catch (FileNotFoundException)
+        {
+        }
+        catch (Exception e)
+        {
+            CustomLog.LogError("Emerald Tweaks apply failed\nIf Emerald Tweaks is not present, just ignore this\n" + e.ToString());
+        }
+        try
+        {
+            _ReRemix.Apply();
+        }
+        catch (FileNotFoundException)
+        {
+        }
+        catch (Exception e)
+        {
+            CustomLog.LogError("ReRemix apply failed\nIf ReRemix is not present, just ignore this\n" + e.ToString());
         }
     }
 }

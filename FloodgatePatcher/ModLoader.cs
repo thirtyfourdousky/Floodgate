@@ -454,27 +454,4 @@ public static class ModLoader
             CustomLog.LogError(e.ToString());
         }
     }
-
-    /*
-    public static bool ResetMergedMods()
-    {
-        if (FloodgateMergedInfo is not null)
-        {
-            FloodgateMergedInfo.Refresh();
-            if (FloodgateMergedInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
-            {
-                CustomLog.Log("Floodgate Merged Mods directory at " + FloodgateMergedPath + " is a symbolic link or junction. if this is intended by you, do NOT.");
-                FloodgateMergedInfo.Delete();
-                FloodgateMergedInfo.Create();
-            }
-            else
-            {
-                FloodgateMergedInfo.Delete(true);
-                FloodgateMergedInfo.Create();
-            }
-
-        }
-        return FloodgateMergedInfo is not null;
-    }
-    */
 }

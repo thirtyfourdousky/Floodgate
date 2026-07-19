@@ -47,6 +47,9 @@
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
+    <Reference Include="EmeraldsTweaksRemix">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2933890889\plugins\EmeraldsTweaksRemix.dll</HintPath>
+    </Reference>
     <Reference Include="faster-world">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3560520816\plugins\faster-world.dll</HintPath>
     </Reference>
@@ -123,6 +126,9 @@
     <Reference Include="RemixAutoRestart">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2935290634\plugins\RemixAutoRestart.dll</HintPath>
     </Reference>
+    <Reference Include="ReRemix">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3366532650\newest\plugins\ReRemix.dll</HintPath>
+    </Reference>
     <Reference Include="SnowyWorld">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3424930016\plugins\SnowyWorld.dll</HintPath>
     </Reference>
@@ -162,13 +168,15 @@
     <Compile Include="ExTools.cs" />
     <Compile Include="ModCompat\beecat.cs" />
     <Compile Include="ModCompat\CRS\IndexedEntranceClass.cs" />
+    <Compile Include="ModCompat\EmeraldTweaks.cs" />
     <Compile Include="ModCompat\FasterWorldStuff.cs" />
-    <Compile Include="ModCompat\LastWish.cs" />
+    <Compile Include="ModCompat\_LastWish.cs" />
     <Compile Include="ModCompat\Preservatory.cs" />
     <Compile Include="ModCompat\RandomBuff.cs" />
     <Compile Include="ModCompat\RandomPreservatory.cs" />
     <Compile Include="ModCompat\RemixAutoRestarter.cs" />
-    <Compile Include="ModCompat\RotundWorld.cs" />
+    <Compile Include="ModCompat\_ReRemix.cs" />
+    <Compile Include="ModCompat\_RotundWorld.cs" />
     <Compile Include="ModCompat\SnowyWorld.cs" />
     <Compile Include="ModCompat\Unbound\DisableUnregister.cs" />
     <Compile Include="Optimization\CRS\RegionProperties.cs" />
