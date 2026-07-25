@@ -86,6 +86,7 @@ public class FloodgateExtra : BaseUnityPlugin
             CustomLog.LogError("Unbound specific apply failed.\nIf Unbound is not present, just ignore this\n" + e.ToString());
         }
 
+        /*
         try
         {
             EmeraldTweaks.Apply();
@@ -108,5 +109,6 @@ public class FloodgateExtra : BaseUnityPlugin
         {
             CustomLog.LogError("ReRemix apply failed\nIf ReRemix is not present, just ignore this\n" + e.ToString());
         }
+        */
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace awaFloodgatePatchers
+namespace FloodgatePatchers
 {
     public static class RainWorldDrought
     {

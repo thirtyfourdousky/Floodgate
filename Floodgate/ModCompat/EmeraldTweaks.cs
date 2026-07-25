@@ -11,7 +11,8 @@ namespace ModCompat;
 
 public static class EmeraldTweaks
 {
-    public static void Apply()
+    //doesn't works yippee
+    private static void Apply()
     {
         InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(new("EmeraldsTweaksRemix", "EmeraldsTweaksRemix.WorldTweaks/<>c"), "<WarpPointSuckInCreaturesILHook>b__1_0"));
         InlineIL.IL.Pop(out RuntimeMethodHandle handle);

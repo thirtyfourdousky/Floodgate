@@ -9,6 +9,7 @@ public static class Program
     {
         try
         {
+            Console.WriteLine("floodgate remix auto-restarter compat\nif you're reading this, the game is probably is taking too long to close or this program crashed\nif latter, you can close this and reopen your game manually\nplease report any error below if present\nsorry for the incovenience...");
             start(args);
         }catch (Exception ex)
         {

@@ -13,7 +13,8 @@ namespace ModCompat;
 
 public static class _ReRemix
 {
-    public static void Apply()
+    //doesn't works yippee
+    private static void Apply()
     {
         InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(new("ReRemix", "ReRemix.ReRemix/<>c"), "<ShelterDoor_ctor>b__20_0"));
         InlineIL.IL.Pop(out RuntimeMethodHandle handle);
