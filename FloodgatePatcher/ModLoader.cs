@@ -189,7 +189,7 @@ public static class ModLoader
                             object[] param = [assembly, CurrentVersion, IsLatest];
                             CustomLog.Log("Trying to patch " + assemblyName.Name + " using " + patchers[i].Assembly.FullName + " -- " + patchers[i].FullName);
                             patcher.Invoke(null, param);
-                            CustomLog.Log("Sucessfully patched " + assemblyName.Name + " using " + patchers[i].FullName);
+                            CustomLog.Log("Sucessfully patched " + assemblyName.Name + " using " + patchers[i].AssemblyQualifiedName);
                             assembly = (AssemblyDefinition)param[0];
                             patched = true;
                         }
@@ -284,7 +284,7 @@ public static class ModLoader
         return res;
     }
 
-    //version is the latest version of compiling, target is the game's current version. true means it's the latest version
+    //version is the latest version of compiling, target is the game's current version. true means it's the latest version (based on the last version i updated this)
     public static bool ParseLatestVersion(string version, string target)
     {
         List<string> versionsplit = version.Split('.').ToList();
@@ -416,8 +416,10 @@ public static class ModLoader
             }
             string overridepath;
             if (IsLatest && hash is not null &&
-                File.Exists((overridepath = (FloodgatePath + Path.DirectorySeparatorChar + "AssemblyOverride" + Path.DirectorySeparatorChar + hash + Path.DirectorySeparatorChar + assemblyName.Name + ".fdll"))))
-            { 
+                (File.Exists((overridepath = (FloodgatePath + Path.DirectorySeparatorChar + "AssemblyOverride" + Path.DirectorySeparatorChar + hash + Path.DirectorySeparatorChar + assemblyName.Name + ".fdll")))
+                || File.Exists((overridepath = (FloodgatePath + Path.DirectorySeparatorChar + "AssemblyOverride" + Path.DirectorySeparatorChar + hash + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(path) + ".fdll")))
+                || File.Exists((overridepath = (FloodgatePath + Path.DirectorySeparatorChar + "AssemblyOverride" + Path.DirectorySeparatorChar + hash + ".fdll")))))
+            {
                 CustomLog.Log("Overriding assembly path `" + path + "` with `" + overridepath + "`");
                 OverridenAssembliesPaths[(assembly = overridepath)] = path;
                 return true;

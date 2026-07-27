@@ -120,6 +120,9 @@
     <Reference Include="PVStuff">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3357751340\newest\plugins\PVStuff.dll</HintPath>
     </Reference>
+    <Reference Include="Rain World Drought">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3324777051\plugins\Rain World Drought.dll</HintPath>
+    </Reference>
     <Reference Include="RandomBuff">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3305649568\newest\plugins\RandomBuff.dll</HintPath>
     </Reference>
@@ -168,6 +171,7 @@
     <Compile Include="ExTools.cs" />
     <Compile Include="ModCompat\beecat.cs" />
     <Compile Include="ModCompat\CRS\IndexedEntranceClass.cs" />
+    <Compile Include="ModCompat\DroughtStuff.cs" />
     <Compile Include="ModCompat\EmeraldTweaks.cs" />
     <Compile Include="ModCompat\FasterWorldStuff.cs" />
     <Compile Include="ModCompat\_LastWish.cs" />
@@ -179,6 +183,7 @@
     <Compile Include="ModCompat\_RotundWorld.cs" />
     <Compile Include="ModCompat\SnowyWorld.cs" />
     <Compile Include="ModCompat\Unbound\DisableUnregister.cs" />
+    <Compile Include="MonomodTools.cs" />
     <Compile Include="Optimization\CRS\RegionProperties.cs" />
     <Compile Include="ModCompat\EmgTxIteratorCreator.cs" />
     <Compile Include="ModCompat\LBspecific.cs" />
@@ -191,6 +196,7 @@
     <Compile Include="ModCompat\_UnRegEx.cs" />
     <Compile Include="NotEnums\CreatureTemplateType.cs" />
     <Compile Include="NotEnums\EnabledMods.cs" />
+    <Compile Include="Optimization\_ConfigContainer.cs" />
     <Compile Include="World\Map.cs" />
     <Compile Include="World\MapRender.cs" />
     <Compile Include="World\MergeFixMap.cs" />

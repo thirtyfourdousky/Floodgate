@@ -18,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.27";
+    public const string Version = "0.1.28";
 
     public static Plugin? Instance { get; private set; }
 
@@ -281,7 +281,18 @@ public partial class Plugin : BaseUnityPlugin
             }
             catch (Exception e)
             {
-                CustomLog.LogError("randombuff preservatory comat failed\n" + e.ToString());
+                CustomLog.LogError("randombuff preservatory compat failed\n" + e.ToString());
+            }
+        }
+        if (FGTools.IsModActive("drought"))
+        {
+            try
+            {
+                ModCompat.DroughtStuff.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("Drought compat failed, your game will break\n" + e.ToString());
             }
         }
         if (FGTools.IsModActive("yeliah.slugpupFieldtrip") && FGTools.IsModActive("sprobgik.desecratinggraves"))
@@ -391,6 +402,7 @@ public partial class Plugin : BaseUnityPlugin
             CustomLog.LogError("OnModsInit failed at other mod. please report this, some hooks possibly failed and your game may not run well\n" +  origException.ToString());
         }
         //after orig
+        Optimization._ConfigContainer.Apply();
         try
         {
             MachineConnector.SetRegisteredOI(GUID, RemixOptions = new());

@@ -4,7 +4,7 @@ using MonoMod.Cil;
 using System;
 using System.Linq;
 
-public static class FGTools
+public static partial class FGTools
 {
     public static bool IsModActive(string id)
     {
