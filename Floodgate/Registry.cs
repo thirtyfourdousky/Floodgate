@@ -23,7 +23,7 @@ public static class Registry
         Mods.Clear();
         foreach (ModManager.Mod mod in ModManager.ActiveMods)
         {
-            if (mod == null || (Mods.Any(i=>i.mod.id == mod.id))) { continue; }
+            if (mod == null || (Mods.Any(i => i.mod.id == mod.id))) { continue; }
             string floodgatepath = mod.TargetedPath + Path.DirectorySeparatorChar + "floodgate";
             if (mod.hasTargetedVersionFolder && Directory.Exists(floodgatepath))
             {
@@ -50,11 +50,11 @@ public static class Registry
     }
     public static void Merge()
     {
-        if(FloodgatePatcher.ModLoader.FloodgateMergedInfo is null)
+        if (FloodgatePatcher.ModLoader.FloodgateMergedInfo is null)
         {
             return;
         }
-        if(!FloodgatePatcher.ModLoader.FloodgateMergedInfo.Exists || !string.Equals(FloodgatePatcher.ModLoader.FloodgateMergedInfo.Name, "FloodgateMergedMods", StringComparison.OrdinalIgnoreCase) || !string.Equals(FloodgatePatcher.ModLoader.FloodgateMergedInfo.Parent.Name, "StreamingAssets", StringComparison.OrdinalIgnoreCase))
+        if (!FloodgatePatcher.ModLoader.FloodgateMergedInfo.Exists || !string.Equals(FloodgatePatcher.ModLoader.FloodgateMergedInfo.Name, "FloodgateMergedMods", StringComparison.OrdinalIgnoreCase) || !string.Equals(FloodgatePatcher.ModLoader.FloodgateMergedInfo.Parent.Name, "StreamingAssets", StringComparison.OrdinalIgnoreCase))
         {
             FloodgatePatcher.CustomLog.Log("[File Merging] Floodgate's merged folder could not be found for some reason");
             FloodgatePatcher.ModLoader.FloodgateMergedInfo = null;
@@ -64,7 +64,7 @@ public static class Registry
 
         List<string> merged = new();
         List<string> mergedfiles = new();
-        foreach(RegisteredMod mod in Mods)
+        foreach (RegisteredMod mod in Mods)
         {
             string mergedpath = (mod.floodgate + Path.DirectorySeparatorChar + "merged" + Path.DirectorySeparatorChar + "merged.txt");
             if (File.Exists(mergedpath))
@@ -72,7 +72,7 @@ public static class Registry
                 mergedfiles.Add(mergedpath);
             }
         }
-        foreach(string file in mergedfiles)
+        foreach (string file in mergedfiles)
         {
             string[] lines = File.ReadAllLines(file);
             foreach (string line in lines)
@@ -154,10 +154,10 @@ public static class Registry
             }
         }
 
-        foreach(string file in Directory.GetFiles(FloodgatePatcher.ModLoader.FloodgateMergedInfo.FullName, "*.*", SearchOption.AllDirectories))
+        foreach (string file in Directory.EnumerateFiles(FloodgatePatcher.ModLoader.FloodgateMergedInfo.FullName, "*.*", SearchOption.AllDirectories))
         {
             string path = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            if(!handledpaths.Contains(path) && (path.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+            if (!handledpaths.Contains(path) && (path.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
             {
                 File.Delete(path);
                 //FloodgatePatcher.CustomLog.Log("[File Merging] Deleting file " + path );
@@ -165,10 +165,15 @@ public static class Registry
         }
         handledpaths.Clear();
 
+        FasterWorldCache();
+
         TurboAssetManager.accessfgmerged = true;
         sw.Stop();
         FloodgatePatcher.CustomLog.Log("[File Merging] Took " + sw.ElapsedMilliseconds + "ms");
     }
+
+    public static Action FasterWorldCache = static delegate { };
+
     public static readonly HashSet<string> handledpaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     public static void MergeCopy(string path, string trimm)
     {
@@ -181,17 +186,18 @@ public static class Registry
             {
                 //FloodgatePatcher.CustomLog.Log("[File Merging] Creating directory " + dirDestination);
                 Directory.CreateDirectory(dirDestination);
-            }catch(System.Exception ex)
+            }
+            catch (System.Exception ex)
             {
                 FloodgatePatcher.CustomLog.LogError("[File Merging] Error creating directory " + dirDestination + "\n" + ex.ToString());
                 return;
             }
         }
-        foreach(string dir  in Directory.GetDirectories(path))
+        foreach (string dir in Directory.EnumerateDirectories(path))
         {
-            MergeCopy(dir,trimm);
+            MergeCopy(dir, trimm);
         }
-        foreach(string file in Directory.GetFiles(path))
+        foreach (string file in Directory.EnumerateFiles(path))
         {
             string destination = (FloodgatePatcher.ModLoader.FloodgateMergedPath + Path.DirectorySeparatorChar + file.Replace(trimm, "").TrimStart(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             if (!File.Exists(destination))
@@ -207,7 +213,7 @@ public static class Registry
                     FloodgatePatcher.CustomLog.LogError("[File Merging] Error copying file " + file + " to " + destination + "\n" + ex.ToString());
                 }
             }
-            else if(!handledpaths.Contains(destination))
+            else if (!handledpaths.Contains(destination))
             {
                 try
                 {
@@ -235,7 +241,7 @@ public static class Registry
             return true;
         }
 
-        if(source.Length == destination.Length && source.LastWriteTime == destination.LastWriteTime)
+        if (source.Length == destination.Length && source.LastWriteTime == destination.LastWriteTime)
         {
             return false;
         }
@@ -251,7 +257,7 @@ public static class Registry
         {
             desthash = string.Join("", destsha.ComputeHash(destfs).Select(x => x.ToString("x2")));
         }
-        if(sourcehash == desthash)
+        if (sourcehash == desthash)
         {
             return false;
         }

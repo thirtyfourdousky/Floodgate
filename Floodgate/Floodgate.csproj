@@ -198,7 +198,7 @@
     <Compile Include="NotEnums\EnabledMods.cs" />
     <Compile Include="Optimization\_ConfigContainer.cs" />
     <Compile Include="World\Map.cs" />
-    <Compile Include="World\MapRender.cs" />
+    <None Include="World\MapRender.cs" />
     <Compile Include="World\MergeFixMap.cs" />
     <Compile Include="World\Optimization.cs" />
     <Compile Include="_Modules\DevTools\Objects\ObjectsMenu.cs" />

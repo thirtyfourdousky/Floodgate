@@ -18,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.28";
+    public const string Version = "0.1.281";
 
     public static Plugin? Instance { get; private set; }
 
@@ -30,13 +30,13 @@ public partial class Plugin : BaseUnityPlugin
     public void Awake()
     {
         Instance = this;
-        if(woke)
+        if (woke)
         {
             return;
         }
         OtherHooks.ResolveFilePathAlt = TurboAssetManager.AssetManager_ResolveFilePath_string_bool_bool;
         logger = base.Logger;
-        
+
         On.RainWorld.PostModsInit += RainWorld_PostModsInit;
         On.RainWorld.OnModsInit += RainWorld_OnModsInit;
         On.ModManager.ModApplyer.Start += ModApplyer_Start;
@@ -60,9 +60,9 @@ public partial class Plugin : BaseUnityPlugin
             ILCursor c = new ILCursor(il);
 
             c.GotoNext(MoveType.After, x => x.MatchCallvirt(typeof(System.Reflection.Assembly).GetProperty("Location", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | BindingFlags.Instance).GetGetMethod()));
-            c.EmitDelegate<Func<string,string>>(static delegate (string assemblyPath)
+            c.EmitDelegate<Func<string, string>>(static delegate (string assemblyPath)
             {
-                if(ModLoader.OverridenAssembliesPaths.TryGetValue(assemblyPath, out string realPath))
+                if (ModLoader.OverridenAssembliesPaths.TryGetValue(assemblyPath, out string realPath))
                 {
                     return realPath;
                 }
@@ -76,18 +76,18 @@ public partial class Plugin : BaseUnityPlugin
             {
                 //disable mods with missing dependencies
                 HashSet<string> allenabledmods = new(StringComparer.OrdinalIgnoreCase);
-                for(int i = 0; i < ModManager.ActiveMods.Count; i++)
+                for (int i = 0; i < ModManager.ActiveMods.Count; i++)
                 {
                     allenabledmods.Add(ModManager.ActiveMods[i].id);
                 }
                 HashSet<string> brokenMods = new(StringComparer.OrdinalIgnoreCase);
-                for(int i = 0; i < ModManager.ActiveMods.Count; i++)
+                for (int i = 0; i < ModManager.ActiveMods.Count; i++)
                 {
                     if (brokenMods.Contains(ModManager.ActiveMods[i].id))
                     {
                         continue;
                     }
-                    for(int ii = 0; ii < ModManager.ActiveMods[i].requirements.Length; ii++)
+                    for (int ii = 0; ii < ModManager.ActiveMods[i].requirements.Length; ii++)
                     {
                         if (brokenMods.Contains(ModManager.ActiveMods[i].requirements[ii]) || !allenabledmods.Contains(ModManager.ActiveMods[i].requirements[ii]))
                         {
@@ -98,7 +98,7 @@ public partial class Plugin : BaseUnityPlugin
                     }
                 }
 
-                for(int i = 0; i < ModManager.ActiveMods.Count; i++)
+                for (int i = 0; i < ModManager.ActiveMods.Count; i++)
                 {
                     if (brokenMods.Contains(ModManager.ActiveMods[i].id))
                     {
@@ -107,7 +107,7 @@ public partial class Plugin : BaseUnityPlugin
                     }
                 }
 
-                for(int i = 0; i < options.enabledMods.Count; i++)
+                for (int i = 0; i < options.enabledMods.Count; i++)
                 {
                     if (brokenMods.Contains(options.enabledMods[i]))
                     {
@@ -128,7 +128,7 @@ public partial class Plugin : BaseUnityPlugin
     {
         //FloodgatePatcher.ModLoader.ResetMergedMods();
         TurboAssetManager.accessfgmerged = false;
-        orig(self,filesInBadState);
+        orig(self, filesInBadState);
     }
 
     private void NotchMeter_ctor(On.Menu.EndgameMeter.NotchMeter.orig_ctor orig, Menu.EndgameMeter.NotchMeter self, Menu.EndgameMeter owner)
@@ -139,7 +139,7 @@ public partial class Plugin : BaseUnityPlugin
 
         if (ModManager.MSC)
         {
-            if(owner.tracker.ID == MoreSlugcats.MoreSlugcatsEnums.EndgameID.Nomad)
+            if (owner.tracker.ID == MoreSlugcats.MoreSlugcatsEnums.EndgameID.Nomad)
             {
                 int regionCount = Region.GetFullRegionOrder().Count;
                 for (int i = 0; i < tracker.myList.Count; i++)
@@ -185,7 +185,7 @@ public partial class Plugin : BaseUnityPlugin
         {
             if (fasterworld)
             {
-                CustomLog.Log("Faster World apply" + (GSL? " with GSL" : "") + "...");
+                CustomLog.Log("Faster World apply" + (GSL ? " with GSL" : "") + "...");
                 if (GSL)
                 {
                     try
@@ -211,8 +211,10 @@ public partial class Plugin : BaseUnityPlugin
             }
             if (fasterworldextra)
             {
-                CustomLog.Log("Faster World Extra apply" + (GSL ? " with GSL" : "") + "...");
-                if (GSL)
+                CustomLog.Log("Faster World Extra apply...");
+                Registry.FasterWorldCache = ModCompat.FasterWorldStuff.CacheFloodgate;
+                //CustomLog.Log("Faster World Extra apply" + (GSL ? " with GSL" : "") + "...");
+                /*if (GSL)
                 {
                     try
                     {
@@ -233,7 +235,15 @@ public partial class Plugin : BaseUnityPlugin
                     {
                         CustomLog.LogError("Faster World Extra compat failed\n" + ex2.ToString());
                     }
-                }
+                }*/
+            }
+            if (GSL)
+            {
+                ModCompat.FasterWorldStuff.ApplyRest();
+            }
+            else
+            {
+                ModCompat.FasterWorldStuff.GSL_ApplyRest();
             }
         }
         else
@@ -322,7 +332,8 @@ public partial class Plugin : BaseUnityPlugin
             try
             {
                 ModCompat.WDTGGcompat.Apply();
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 CustomLog.LogError("WDTGG apply failed\n" + e.ToString());
             }
@@ -333,7 +344,7 @@ public partial class Plugin : BaseUnityPlugin
             {
                 ModCompat.LBspecific.Apply();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 CustomLog.LogError("M4rblelous Entity Pack specific apply failed\n" + e.ToString());
             }
@@ -343,7 +354,8 @@ public partial class Plugin : BaseUnityPlugin
             try
             {
                 ModCompat.RegionKit.RegionKitApply.Apply();
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 CustomLog.LogError("RegionKit specific apply failed\n" + e.ToString());
             }
@@ -397,9 +409,10 @@ public partial class Plugin : BaseUnityPlugin
         try
         {
             orig(self); //yes im blind
-        }catch(Exception origException)
+        }
+        catch (Exception origException)
         {
-            CustomLog.LogError("OnModsInit failed at other mod. please report this, some hooks possibly failed and your game may not run well\n" +  origException.ToString());
+            CustomLog.LogError("OnModsInit failed at other mod. please report this, some hooks possibly failed and your game may not run well\n" + origException.ToString());
         }
         //after orig
         Optimization._ConfigContainer.Apply();
@@ -408,7 +421,7 @@ public partial class Plugin : BaseUnityPlugin
             MachineConnector.SetRegisteredOI(GUID, RemixOptions = new());
             RemixOptions._LoadConfigFile();
         }
-        catch(System.Exception e)
+        catch (System.Exception e)
         {
             FloodgatePatcher.CustomLog.LogError(e.ToString());
         }

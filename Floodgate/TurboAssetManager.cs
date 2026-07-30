@@ -72,46 +72,39 @@ public static class TurboAssetManager
     }
 
     internal static void AssetManager_ListDirectory_string_bool_bool_bool(ILContext il)
-	{
-		try
-		{
-			ILCursor c = new(il);
-			if(c.TryGotoNext(MoveType.After, x => x.MatchStloc(2)))
-			{
-				ILLabel label = il.DefineLabel();
-				object addOperand = c.Next.Next.Next.Next.Next.Operand;
-				object pathcombineOperand = c.Next.Next.Next.Next.Operand;
-				object RootFolderDir = c.Next.Next.Operand;
+    {
+        try
+        {
+            ILCursor c = new(il);
+            if (c.TryGotoNext(MoveType.After, x => x.MatchStloc(2)))
+            {
+                ILLabel label = il.DefineLabel();
+                object addOperand = c.Next.Next.Next.Next.Next.Operand;
+                object pathcombineOperand = c.Next.Next.Next.Next.Operand;
+                object RootFolderDir = c.Next.Next.Operand;
                 InlineIL.IL.Emit.Ldtoken(new InlineIL.FieldRef(typeof(TurboAssetManager), "accessfgmerged"));
                 InlineIL.IL.Pop(out System.RuntimeFieldHandle accessfgmergedhandle);
                 var _accessfgmerged = il.Import(System.Reflection.FieldInfo.GetFieldFromHandle(accessfgmergedhandle));
                 c.Emit(OpCodes.Ldsfld, _accessfgmerged);
                 //c.EmitDelegate(static () => { return accessfgmerged; });
-				c.Emit(OpCodes.Brfalse_S, label);
-				c.Emit(OpCodes.Ldloc_2);
-				c.Emit(OpCodes.Call, RootFolderDir);
-				c.Emit(OpCodes.Ldstr, "floodgatemergedmods");
-				c.Emit(OpCodes.Call, pathcombineOperand);
-				c.Emit(OpCodes.Callvirt, addOperand);
-				c.MarkLabel(label);
-			}
-			else
-			{
-				CustomLog.LogError("AssetManager ListDirectory Hook couldn't find injection point");
-			}
-		}
-		catch (System.Exception ex)
-		{
-			CustomLog.LogError("AssetManager ListDirectory Hook failed\n" + ex.ToString());
-		}
-	}
+                c.Emit(OpCodes.Brfalse_S, label);
+                c.Emit(OpCodes.Ldloc_2);
+                c.Emit(OpCodes.Call, RootFolderDir);
+                c.Emit(OpCodes.Ldstr, "floodgatemergedmods");
+                c.Emit(OpCodes.Call, pathcombineOperand);
+                c.Emit(OpCodes.Callvirt, addOperand);
+                c.MarkLabel(label);
+            }
+            else
+            {
+                CustomLog.LogError("AssetManager ListDirectory Hook couldn't find injection point");
+            }
+        }
+        catch (System.Exception ex)
+        {
+            CustomLog.LogError("AssetManager ListDirectory Hook failed\n" + ex.ToString());
+        }
+    }
 
     public static bool accessfgmerged = false;
-
-
-    //
-    public static void MergeScan()
-    {
-
-    }
 }
