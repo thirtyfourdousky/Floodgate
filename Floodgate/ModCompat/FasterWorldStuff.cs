@@ -14,21 +14,17 @@ public static class FasterWorldStuff
     public static readonly List<object> _hooks = new List<object>();
 
     //Faster World Extra
-    /*public static void GSL_Apply_Extra()
+    public static void GSL_Apply_Extra()
     {
         _hooks.Add(DetourUtils.newHookRND((On.AssetManager.orig_ResolveFilePath_string_bool_bool)faster_world_extra.M_Assets.AssetManager_ResolveFilePath, (On.AssetManager.hook_ResolveFilePath_string_bool_bool)AssetManager_ResolveFilePath));
-        //_hooks.Add(DetourUtils.newHookRND((On.AssetManager.orig_ResolveFilePath_string)faster_world_extra.M_Assets.ResolveFilePath, (On.AssetManager.hook_ResolveFilePath_string)ResolveFilePath));
-
-        Floodgate.Registry.FasterWorldCache = CacheFloodgate;
+        _hooks.Add(DetourUtils.newHookRND((On.AssetManager.orig_ResolveFilePath_string)faster_world_extra.M_Assets.ResolveFilePath, (On.AssetManager.hook_ResolveFilePath_string)ResolveFilePath));
     }
 
     public static void Apply_Extra()
     {
         _hooks.Add(new Hook((On.AssetManager.orig_ResolveFilePath_string_bool_bool)faster_world_extra.M_Assets.AssetManager_ResolveFilePath, (On.AssetManager.hook_ResolveFilePath_string_bool_bool)AssetManager_ResolveFilePath));
-        //_hooks.Add(new Hook((On.AssetManager.orig_ResolveFilePath_string)faster_world_extra.M_Assets.ResolveFilePath, (On.AssetManager.hook_ResolveFilePath_string)ResolveFilePath));
-
-        Floodgate.Registry.FasterWorldCache = CacheFloodgate;
-    }*/
+        _hooks.Add(new Hook((On.AssetManager.orig_ResolveFilePath_string)faster_world_extra.M_Assets.ResolveFilePath, (On.AssetManager.hook_ResolveFilePath_string)ResolveFilePath));
+    }
 
     //Faster World
     public static void GSL_Apply()
@@ -78,14 +74,14 @@ public static class FasterWorldStuff
         return orig(path);
     }
 
-    public static void CacheFloodgate()
+    /*public static void CacheFloodgate()
     {
         foreach(string file in Directory.EnumerateFiles(FloodgateMergedMods, "*", SearchOption.AllDirectories))
         {
             string key = file.Substring(FloodgateMergedMods.Length).ToLowerInvariant();
             faster_world_extra.M_Assets.mergedmodsCache[key] = faster_world_extra.M_Assets.cachedPaths[key] = file;
         }
-    }
+    }*/
 
     public static string FloodgateMergedMods = RWCustom.Custom.RootFolderDirectory() + Path.DirectorySeparatorChar + "floodgatemergedmods" + Path.DirectorySeparatorChar;
 }

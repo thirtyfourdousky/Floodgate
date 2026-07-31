@@ -18,7 +18,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.281";
+    public const string Version = "0.1.282";
 
     public static Plugin? Instance { get; private set; }
 
@@ -183,6 +183,7 @@ public partial class Plugin : BaseUnityPlugin
         bool GSL = FGTools.IsModActive("0gelbi.silly-lib");
         if (fasterworld || fasterworldextra)
         {
+            bool failed = false;
             if (fasterworld)
             {
                 CustomLog.Log("Faster World apply" + (GSL ? " with GSL" : "") + "...");
@@ -194,6 +195,7 @@ public partial class Plugin : BaseUnityPlugin
                     }
                     catch (Exception ex2)
                     {
+                        failed = true;
                         CustomLog.LogError("Faster World compat with GSL failed\n" + ex2.ToString());
                     }
                 }
@@ -205,16 +207,17 @@ public partial class Plugin : BaseUnityPlugin
                     }
                     catch (Exception ex2)
                     {
+                        failed = true;
                         CustomLog.LogError("Faster World compat failed\n" + ex2.ToString());
                     }
                 }
             }
             if (fasterworldextra)
             {
-                CustomLog.Log("Faster World Extra apply...");
-                Registry.FasterWorldCache = ModCompat.FasterWorldStuff.CacheFloodgate;
-                //CustomLog.Log("Faster World Extra apply" + (GSL ? " with GSL" : "") + "...");
-                /*if (GSL)
+                //CustomLog.Log("Faster World Extra apply...");
+                //Registry.FasterWorldCache = ModCompat.FasterWorldStuff.CacheFloodgate;
+                CustomLog.Log("Faster World Extra apply" + (GSL ? " with GSL" : "") + "...");
+                if (GSL)
                 {
                     try
                     {
@@ -222,6 +225,7 @@ public partial class Plugin : BaseUnityPlugin
                     }
                     catch (Exception ex2)
                     {
+                        failed = true;
                         CustomLog.LogError("Faster World Extra compat with GSL failed\n" + ex2.ToString());
                     }
                 }
@@ -233,11 +237,18 @@ public partial class Plugin : BaseUnityPlugin
                     }
                     catch (Exception ex2)
                     {
+                        failed = true;
                         CustomLog.LogError("Faster World Extra compat failed\n" + ex2.ToString());
                     }
-                }*/
+                }
             }
-            if (GSL)
+            if (failed)
+            {
+                CustomLog.Log("As one of Faster World hooks failed, Floodgate will override it...\nthis means any faster world present will be essentially disabled\nThis does NOT mean everything will be ok, i can't predict this scenario");
+                TurboAssetManager.Apply();
+                On.WorldLoader.FindRoomFile += On_WorldLoader_FindRoomFile;
+            }
+            else if (GSL)
             {
                 ModCompat.FasterWorldStuff.ApplyRest();
             }
@@ -449,5 +460,11 @@ public partial class Plugin : BaseUnityPlugin
         Steam.Workshop.Apply();
         ExHooks.HookManager.ApplyHooks();
         _Modules.ExtendedEchoExtender.Hooks.Apply();
+    }
+
+    //this is my silly attempt of forcefully disable faster world NativeDetour on fail
+    public static string On_WorldLoader_FindRoomFile(On.WorldLoader.orig_FindRoomFile orig, string roomName, bool includeRootDirectory, string additionalAppend, bool showWarning)
+    {
+        return orig(roomName, includeRootDirectory, additionalAppend, showWarning);
     }
 }

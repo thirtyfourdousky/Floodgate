@@ -524,12 +524,12 @@ public static class Hooks
             return;
         }
         GhostWorldPresence.GhostID ghostID = null;
+
         //EchoSettings _settings;
         foreach (var settings in Registry.echoesSettings)
         {
-            if (string.Equals(settings.Value.Room, self.abstractRoom.name, StringComparison.OrdinalIgnoreCase))
+            if (settings.Value.SpawnOnDifficulty && string.Equals(settings.Value.Room, self.abstractRoom.name, StringComparison.OrdinalIgnoreCase))
             {
-                //_settings = settings.Value;
                 ghostID = settings.Key;
                 break;
             }
