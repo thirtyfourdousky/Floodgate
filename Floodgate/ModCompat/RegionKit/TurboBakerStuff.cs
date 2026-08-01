@@ -27,6 +27,25 @@ public static class TurboBakerStuff
         hooks.Add(new ILHook(typeof(TurboBakerTab).GetMethod("Update", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance), IL_Update));
     }
 
+    public static IEnumerable<Region> EnumerableLoadAllRegions(SlugcatStats.Timeline timelineIndex, RainWorldGame game)
+    {
+        string path = AssetManager.ResolveFilePath("World" + Path.DirectorySeparatorChar + "regions.txt");
+        string[] array = new string[1] { "" };
+        
+        if (File.Exists(path))
+        {
+            array = File.ReadAllLines(path);
+        }
+
+        Region[] array2 = new Region[array.Length];
+        int num = 0;
+        for (int i = 0; i < array.Length; i++)
+        {
+            yield return array2[i] = new Region(array[i], num, i, game, timelineIndex);
+            num += array2[i].numberOfRooms;
+        }
+    }
+
     public static void IL_ModOptions_Initialize(ILContext il)
     {
         try
@@ -156,10 +175,11 @@ public static class TurboBakerStuff
         {
             On.WorldLoader.LoadAbstractRoom += On_LoadAbstractRoom;
             On.RoomSettings.Load_Timeline += RoomSettings_Load;
-            List<string> list = (from x in this.Regions
-                                 where x.Value.GetValueBool()
-                                 select x.Key).ToList<string>();
-            if (list.Count == 0)
+            //List<string> list = (from x in this.Regions
+            //                     where x.Value.GetValueBool()
+            //                     select x.Key).ToList<string>();
+            //if (list.Count == 0)
+            if(!(this.Regions.Any(x=>x.Value.GetValueBool())))
             {
                 trigger.PlaySound(SoundID.MENU_Error_Ping);
                 return;
@@ -174,32 +194,31 @@ public static class TurboBakerStuff
             {
                 var parOpt = new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = Threads.Value
+                    MaxDegreeOfParallelism = ValueExt.GetValueInt(ThreadsInput)
                 };
-                bool value = HiddenSlugcats.Value;
-                bool value2 = ForceBake.Value;
-                List<string> regionsToBake = (from x in Regions
+                IEnumerable<string> regionsToBake = (from x in Regions
                                               where x.Value.GetValueBool()
-                                              select x.Key).ToList();
+                                              select x.Key);
 
                 List<WorldLoader> loaders = new List<WorldLoader>();
 
                 string[] names = ExtEnumBase.GetNames(typeof(SlugcatStats.Name));
 
-                Dictionary<string, IEnumerable<Region>> loadedRegions = new();
+                //Dictionary<string, IEnumerable<Region>> loadedRegions = new();
 
                 statusText = "Creating World Loaders";
 
                 foreach (string scug in names)
                 {
                     SlugcatStats.Name name = new SlugcatStats.Name(scug);
-                    if (!value && SlugcatStats.HiddenOrUnplayableSlugcat(name))
+                    if (!ValueExt.GetValueBool(HiddenSlugcatsInput) && SlugcatStats.HiddenOrUnplayableSlugcat(name))
                     {
                         continue;
                     }
-                    foreach (Region item in from x in Region.LoadAllRegions(SlugcatStats.SlugcatToTimeline(name), null)
-                                            where regionsToBake.Contains(x.name)
-                                            select x)
+                    //foreach (Region item in from x in Region.LoadAllRegions(SlugcatStats.SlugcatToTimeline(name), null)
+                    //                        where regionsToBake.Contains(x.name)
+                    //                        select x)
+                    foreach (Region item in EnumerableLoadAllRegions(SlugcatStats.SlugcatToTimeline(name), null).Where(x=>regionsToBake.Contains(x.name)))
                     {
                         WorldLoader worldLoader = new WorldLoader(null, name, SlugcatStats.SlugcatToTimeline(name), singleRoomWorld: false, item.name, item, RainWorld.LoadSetupValues(distributionBuild: true), WorldLoader.LoadingContext.MAPMERGE);
                         worldLoader.NextActivity();
@@ -247,7 +266,7 @@ public static class TurboBakerStuff
                         rooms.Add(text);
                         CustomLog.Log("Started preparing room: " + text);
                         string[] roomText = File.ReadAllLines(WorldLoader.FindRoomFile(text, includeRootDirectory: false, ".txt"));
-                        if (int.Parse(roomText[9].Split('|')[0], NumberStyles.Any, CultureInfo.InvariantCulture) < world.preProcessingGeneration || value2)
+                        if (int.Parse(roomText[9].Split('|')[0], NumberStyles.Any, CultureInfo.InvariantCulture) < world.preProcessingGeneration || ValueExt.GetValueBool(ForceBakeInput))
                         {
                             AbstractRoom abstractRoom = loader.abstractRooms[num2];
                             int generation = world.preProcessingGeneration;
@@ -268,7 +287,7 @@ public static class TurboBakerStuff
                                         taskData.StartTime = DateTime.Now;
                                     }
                                     taskData.Started = true;
-                                    _RunToCompletion(roomPreparer);
+                                    RunToCompletion2(roomPreparer);
                                     abstractRoom.InitNodes(roomPreparer.ReturnRoomConnectivity(), roomText[1]);
                                     roomText[9] = global::RoomPreprocessor.ConnMapToString(generation, abstractRoom.nodes);
                                     roomText[10] = global::RoomPreprocessor.CompressAIMapsToString(room.aimap);
@@ -308,7 +327,7 @@ public static class TurboBakerStuff
             }
         }
 
-        public void _RunToCompletion(RoomPreparer preparer)
+        public void RunToCompletion2(RoomPreparer preparer)
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-US");
             while (!preparer.scMapper.done)

@@ -111,9 +111,6 @@
     <Reference Include="PUBLIC-MergeFix">
       <HintPath>..\..\..\ASM\1.11\PUBLIC-MergeFix.dll</HintPath>
     </Reference>
-    <Reference Include="PUBLIC-RegionKit">
-      <HintPath>..\..\..\ASM\1.11\PUBLIC-RegionKit.dll</HintPath>
-    </Reference>
     <Reference Include="PUBLIC-WDTGG">
       <HintPath>..\..\..\ASM\1.11\PUBLIC-WDTGG.dll</HintPath>
     </Reference>
@@ -125,6 +122,9 @@
     </Reference>
     <Reference Include="RandomBuff">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3305649568\newest\plugins\RandomBuff.dll</HintPath>
+    </Reference>
+    <Reference Include="RegionKit">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2920439476\newest\plugins\RegionKit.dll</HintPath>
     </Reference>
     <Reference Include="RemixAutoRestart">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\2935290634\plugins\RemixAutoRestart.dll</HintPath>

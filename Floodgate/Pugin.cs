@@ -4,11 +4,8 @@ using FloodgatePatcher;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using MonoMod.RuntimeDetour;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace Floodgate;
@@ -18,7 +15,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.282";
+    public const string Version = "0.1.291";
 
     public static Plugin? Instance { get; private set; }
 
@@ -250,11 +247,11 @@ public partial class Plugin : BaseUnityPlugin
             }
             else if (GSL)
             {
-                ModCompat.FasterWorldStuff.ApplyRest();
+                ModCompat.FasterWorldStuff.GSL_ApplyRest();
             }
             else
             {
-                ModCompat.FasterWorldStuff.GSL_ApplyRest();
+                ModCompat.FasterWorldStuff.ApplyRest();
             }
         }
         else

@@ -217,6 +217,7 @@ public static class CustomMerger
                         }
                     }
                 }
+                current.conditionallinks = current.conditionallinks.Distinct().ToList();
             });
             //rooms, creatures
             System.Threading.Tasks.Task roomTask = System.Threading.Tasks.Task.Run(() =>
@@ -225,6 +226,7 @@ public static class CustomMerger
                 {
                     DoOperation(ref current.rooms, mLine);
                 }
+                current.rooms = current.rooms.Distinct().ToList();
             });
             System.Threading.Tasks.Task critTask = System.Threading.Tasks.Task.Run(() =>
             {
@@ -232,6 +234,7 @@ public static class CustomMerger
                 {
                     DoOperation(ref current.creatures, mLine);
                 }
+                mLines.creatures = current.creatures.Distinct().ToList();
             });
 
             conlTask.GetAwaiter().GetResult(); roomTask.GetAwaiter().GetResult(); critTask.GetAwaiter().GetResult();
@@ -312,7 +315,7 @@ public static class CustomMerger
         if (string.IsNullOrWhiteSpace(merge.line))
         {
             FloodgatePatcher.CustomLog.Log("[World Loader] line is empty\n[" + merge.operand + "]" + merge.line);
-            lines = lines.Distinct().ToList();
+            //lines = lines.Distinct().ToList();
             return;
         }
         FloodgatePatcher.CustomLog.Log("[World Loader] doing operation [" + merge.operand + "] with line " + merge.line);
@@ -374,7 +377,7 @@ public static class CustomMerger
                 lines.Add(merge.line);
             }
         }
-        lines = lines.Distinct().ToList();
+        //lines = lines.Distinct().ToList();
     }
 
 

@@ -169,20 +169,20 @@ public static class RemixModList
             }
             if (newestPlugin)
             {
-                string path = (mod.NewestPath + Path.DirectorySeparatorChar + "plugins");
-                if (Directory.GetFiles(path).Length > 0)
+                string[] paths;
+                if ((paths = Directory.GetFiles((mod.NewestPath + Path.DirectorySeparatorChar + "plugins"))).Length > 0)
                 {
-                    float timeDiff = Mathf.Clamp((float)((Directory.GetFiles((mod.NewestPath + Path.DirectorySeparatorChar + "plugins")).Max(File.GetCreationTimeUtc) - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), 0, 1);
+                    float timeDiff = Mathf.Clamp((float)((paths.Max(File.GetCreationTimeUtc) - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), 0, 1);
                     pixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff != 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
                     goto FINISH;
                 }
             }
             if (hasPlugin)
             {
-                string path = (mod.path + Path.DirectorySeparatorChar + "plugins");
-                if (Directory.GetFiles(path).Length > 0)
+                string[] paths;
+                if ((paths = Directory.GetFiles((mod.path + Path.DirectorySeparatorChar + "plugins"))).Length > 0)
                 {
-                    float timeDiff = Mathf.Clamp((float)((Directory.GetFiles((mod.path + Path.DirectorySeparatorChar + "plugins")).Max(File.GetCreationTimeUtc) - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), 0, 1);
+                    float timeDiff = Mathf.Clamp((float)((paths.Max(File.GetCreationTimeUtc) - watcherRelease).TotalMilliseconds / elapsedTime.TotalMilliseconds), 0, 1);
                     pixel.color = timeDiff > 0.4 ? Color.Lerp(Color.yellow, Color.cyan, Mathf.InverseLerp(0.4f, 1f, timeDiff)) : timeDiff != 0 ? Color.Lerp(new Color(0.8f, 0.2f, 0.1f), Color.yellow, Mathf.InverseLerp(0f, 0.4f, timeDiff)) : Color.red;
                     goto FINISH;
                 }

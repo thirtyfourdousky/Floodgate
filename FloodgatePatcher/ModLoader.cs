@@ -74,7 +74,7 @@ public static class ModLoader
                 FloodgateMergedInfo.Create();
             }
         }
-        foreach(string file in Directory.GetFiles(FloodgateMergedInfo.FullName, "*.*", SearchOption.AllDirectories))
+        foreach(string file in Directory.EnumerateFiles(FloodgateMergedInfo.FullName, "*.*", SearchOption.AllDirectories))
         {
             string path = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             if(path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".sys", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".ini", StringComparison.OrdinalIgnoreCase))
@@ -96,8 +96,7 @@ public static class ModLoader
             Hooks.Add(new ILHook(typeof(Assembly).GetMethod("LoadFile", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof(string), typeof(Evidence) }, null), IL_Assembly_LoadFile));
         }
         //Hooks.Add(new ILHook(typeof(Utility).GetMethod("TryResolveDllAssembly", BindingFlags.Public | BindingFlags.Static, null, [typeof(AssemblyName), typeof(string), typeof(Assembly).MakeByRefType()], null), IL_TryResolveDllAssembly));
-
-        //IsLatest = (CurrentVersion == LatestVersion) || (int.Parse(new(CurrentVersion.Where(char.IsDigit).ToArray())) >= int.Parse(new(LatestVersion.Where(char.IsDigit).ToArray())));
+        
         IsLatest = ParseLatestVersion(LatestVersion, CurrentVersion);
 
         //get Floodgate Path
@@ -148,8 +147,12 @@ public static class ModLoader
 #nullable enable
     public static bool ResolveAssembly(AssemblyName assemblyName, string dir, out string? path)
     {
-        List<string> list = [dir, .. Directory.GetDirectories(dir, "*", SearchOption.AllDirectories)];
-        foreach (string item in list)
+        path = (dir + Path.DirectorySeparatorChar + assemblyName.Name + ".dll");
+        if (File.Exists(path))
+        {
+            return true;
+        }
+        foreach (string item in Directory.EnumerateDirectories(dir, "*", SearchOption.AllDirectories))
         {
             path = (item + Path.DirectorySeparatorChar + assemblyName.Name + ".dll");
             if (File.Exists(path))
@@ -287,10 +290,10 @@ public static class ModLoader
     //version is the latest version of compiling, target is the game's current version. true means it's the latest version (based on the last version i updated this)
     public static bool ParseLatestVersion(string version, string target)
     {
-        List<string> versionsplit = version.Split('.').ToList();
-        List<string> targetsplit = target.Split('.').ToList();
+        string[] versionsplit = version.Split('.');
+        string[] targetsplit = target.Split('.');
         
-        int min = Math.Min(versionsplit.Count, targetsplit.Count);
+        int min = Math.Min(versionsplit.Length, targetsplit.Length);
         for (int i = 0; i < min; i++)
         {
             int ver = int.Parse(new(versionsplit[i].Where(char.IsDigit).ToArray()));
@@ -302,7 +305,7 @@ public static class ModLoader
         }
         //reaching this point is assuming the versions are the same
 
-        return targetsplit.Count >= versionsplit.Count;
+        return targetsplit.Length >= versionsplit.Length;
     }
 
 #nullable disable
@@ -318,8 +321,7 @@ public static class ModLoader
             return true;
         }
 
-        List<string> paths = [dir, .. Directory.GetDirectories(dir, "*", SearchOption.AllDirectories)];
-        foreach(var i  in paths)
+        foreach(var i in Directory.EnumerateDirectories(dir, "*", SearchOption.AllDirectories).Prepend(dir))
         {
             string text;
             if(OverrideAssembly((text = (i + Path.DirectorySeparatorChar + assemblyName.Name + ".dll")), assemblyName, out string asmOverride))

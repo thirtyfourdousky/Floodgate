@@ -1,15 +1,8 @@
-﻿using DevInterface;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RWCustom;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using static PVStuffMod.StaticStuff;
 
 namespace Floodgate.World;
 
@@ -87,9 +80,7 @@ public static class Map
     }
     public static void RelativeCopy(string SourcePath, string MergedMods)
     {
-        string[] Maps = Directory.GetFiles(SourcePath, "map_*.*", SearchOption.AllDirectories);
-
-        foreach (string Map in Maps)
+        foreach (string Map in Directory.EnumerateFiles(SourcePath, "map_*.*", SearchOption.AllDirectories))
         {
             if(!(Map.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) || Map.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
             {

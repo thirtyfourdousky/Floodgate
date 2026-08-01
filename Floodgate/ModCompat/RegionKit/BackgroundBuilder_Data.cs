@@ -21,7 +21,6 @@ public static class BackgroundBuilder_Data
         {
             ILCursor c = new ILCursor(context);
             System.Reflection.MethodInfo RESplit = typeof(System.Text.RegularExpressions.Regex).GetMethod("Split", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null, new Type[] { typeof(string), typeof(string) }, null);
-            //List<Instruction> targets = c.Instrs.Where(i => i.MatchCall<System.Text.RegularExpressions.Regex>("Split")).ToList();
             List<Instruction> targets = c.Instrs.Where(i => i.MatchCall(RESplit)).ToList();
             if (targets.Count == 0)
             {

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Floodgate.NotEnums;
 //redo this whole thing to use hashsets and load from a json instead of this shit

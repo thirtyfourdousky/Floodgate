@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Floodgate.NotEnums;
 //redo this whole thing to use hashsets and load from a json instead of this shit
 public static class CreatureTemplateType
 {
-    public static List<RegisteredCrit> RegisteredTemplates
+    public static IEnumerable<RegisteredCrit> RegisteredTemplates
     {
         get
         {
-            return typeof(CreatureTemplateType).GetFields().Select(f => f.GetValue(null) as RegisteredCrit).Where(i=>i != null && !string.IsNullOrWhiteSpace(i.Name)).ToList();
+            return typeof(CreatureTemplateType).GetFields().Select(f => f.GetValue(null) as RegisteredCrit).Where(i=>i != null && !string.IsNullOrWhiteSpace(i.Name));
         }
     }
     //M4rblelous Entity Pack LBMergedMods

@@ -1,7 +1,5 @@
-﻿
-using FloodgatePatcher;
+﻿using FloodgatePatcher;
 using MonoMod.Cil;
-using System;
 using System.Linq;
 
 public static partial class FGTools
