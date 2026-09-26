@@ -4,6 +4,7 @@ using Menu.Remix.MixedUI.ValueTypes;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
+using RegionKit.Extras;
 using RegionKit.OptionsMenu;
 using System;
 using System.Collections.Concurrent;
@@ -202,7 +203,7 @@ public static class TurboBakerStuff
             //                     where x.Value.GetValueBool()
             //                     select x.Key).ToList<string>();
             //if (list.Count == 0)
-            if(!(this.Regions.Any(x=>x.Value.GetValueBool())))
+            if(!(this.RegionsMap.Any(x=>x.Value.GetValueBool())))
             {
                 trigger.PlaySound(SoundID.MENU_Error_Ping);
                 return;
@@ -219,33 +220,29 @@ public static class TurboBakerStuff
                 {
                     MaxDegreeOfParallelism = ValueExt.GetValueInt(ThreadsInput)
                 };
-                IEnumerable<string> regionsToBake = (from x in Regions
+                IEnumerable<string> regionsToBake = (from x in RegionsMap
                                               where x.Value.GetValueBool()
                                               select x.Key);
 
                 List<WorldLoader> loaders = new List<WorldLoader>();
 
-                string[] names = ExtEnumBase.GetNames(typeof(SlugcatStats.Name));
+                //string[] names = ExtEnumBase.GetNames(typeof(SlugcatStats.Name));
 
                 //Dictionary<string, IEnumerable<Region>> loadedRegions = new();
 
                 statusText = "Creating World Loaders";
 
-                foreach (string scug in names)
+                //foreach (string scug in names)
+                foreach (var (timeline, op) in this.TimelinesMap)
                 {
-                    SlugcatStats.Name name = new SlugcatStats.Name(scug);
-                    if (!ValueExt.GetValueBool(HiddenSlugcatsInput) && SlugcatStats.HiddenOrUnplayableSlugcat(name))
+                    if (op.GetValueBool())
                     {
-                        continue;
-                    }
-                    //foreach (Region item in from x in Region.LoadAllRegions(SlugcatStats.SlugcatToTimeline(name), null)
-                    //                        where regionsToBake.Contains(x.name)
-                    //                        select x)
-                    foreach (Region item in EnumerableLoadAllRegions(SlugcatStats.SlugcatToTimeline(name), null).Where(x => regionsToBake.Contains(x.name)))
-                    {
-                        WorldLoader worldLoader = new WorldLoader(null, name, SlugcatStats.SlugcatToTimeline(name), singleRoomWorld: false, item.name, item, RainWorld.LoadSetupValues(distributionBuild: true), WorldLoader.LoadingContext.MAPMERGE);
-                        worldLoader.NextActivity();
-                        loaders.Add(worldLoader);
+                        foreach (Region item in EnumerableLoadAllRegions(timeline, null).Where(x => regionsToBake.Contains(x.name)))
+                        {
+                            WorldLoader worldLoader = new WorldLoader(null, null, timeline, singleRoomWorld: false, item.name, item, RainWorld.LoadSetupValues(distributionBuild: true), WorldLoader.LoadingContext.MAPMERGE);
+                            worldLoader.NextActivity();
+                            loaders.Add(worldLoader);
+                        }
                     }
                 }
 
@@ -290,7 +287,7 @@ public static class TurboBakerStuff
                         rooms.Add(text);
                         CustomLog.Log("Started preparing room: " + text);
                         string[] roomText = File.ReadAllLines(WorldLoader.FindRoomFile(text, includeRootDirectory: false, ".txt"));
-                        if (int.Parse(roomText[9].Split('|')[0], NumberStyles.Any, CultureInfo.InvariantCulture) < world.preProcessingGeneration || ValueExt.GetValueBool(ForceBakeInput))
+                        if (int.Parse(roomText[9].Split('|')[0], NumberStyles.Any, CultureInfo.InvariantCulture) < world.preProcessingGeneration || ForceBakeInput.GetValueBool())
                         {
                             AbstractRoom abstractRoom = loader.abstractRooms[num2];
                             int generation = world.preProcessingGeneration;

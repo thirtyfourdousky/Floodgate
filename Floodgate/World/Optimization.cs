@@ -10,6 +10,8 @@ public static class Optimization
     public static volatile WorldLoader.LoadingContext lastLoadingContext = null;
     public static void Apply()
     {
+#warning Map related optimization disabled due to
+        /*
         IL.Region.ctor_string_int_int_RainWorldGame_Timeline += Region_ctor_string_int_int_RainWorldGame_Timeline;
         IL.WorldLoader.NextActivity += WorldLoader_NextActivity;
         IL.WorldLoader.CreatingAbstractRooms += WorldLoader_CreatingAbstractRooms;
@@ -17,8 +19,10 @@ public static class Optimization
         On.WorldLoader.CreatingWorld += WorldLoader_CreatingWorld;
         On.WorldLoader.ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues += WorldLoader_ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues;
         On.WorldLoader.ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues_LoadingContext += WorldLoader_ctor_RainWorldGame_Name_Timeline_bool_string_Region_SetupValues_LoadingContext;
-        IL.CustomDecal.LoadFile += CustomDecal_LoadFile;
         //On.Region.ReloadRoomSettingsTemplate += Region_ReloadRoomSettingsTemplate;
+        */
+
+        IL.CustomDecal.LoadFile += CustomDecal_LoadFile;
     }
 
     private static void CustomDecal_LoadFile(ILContext il)

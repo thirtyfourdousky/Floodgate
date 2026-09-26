@@ -1,5 +1,7 @@
 ﻿using FloodgatePatcher;
 using MonoMod.Cil;
+using System;
+using System.Collections;
 using System.Linq;
 
 public static partial class FGTools
@@ -111,5 +113,19 @@ public static partial class FGTools
     {
         cursor.Goto(0);
         return cursor.ToString();
+    }
+
+    public static bool FindAssembly(string asmName, out System.Reflection.Assembly assembly)
+    {
+        foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            if(asm.GetName().Name == asmName)
+            {
+                assembly = asm;
+                return true;
+            }
+        }
+        assembly = default;
+        return false;
     }
 }

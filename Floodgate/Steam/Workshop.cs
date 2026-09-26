@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Steamworks;
 
 namespace Floodgate.Steam;
@@ -17,10 +16,23 @@ public static class Workshop
             queryCallback = CallResult<SteamUGCQueryCompleted_t>.Create(OnQueryResult);
 
             AppId_t rwID = new AppId_t(RainWorldSteamManager.APP_ID);
-            PublishedFileId_t[] modIds = ModManager.InstalledMods.Where(i => i.workshopMod).Select(i => (PublishedFileId_t)i.workshopId).ToArray();
+            PublishedFileId_t[] modIds = FilterMods();
             lastQueryHandle = SteamUGC.CreateQueryUGCDetailsRequest(modIds, (uint)modIds.Length);
             queryCallback.Set(SteamUGC.SendQueryUGCRequest(lastQueryHandle));
         }
+    }
+
+    public static PublishedFileId_t[] FilterMods()
+    {
+        List<PublishedFileId_t> mods = new();
+        foreach(var mod in ModManager.InstalledMods)
+        {
+            if(mod.workshopMod && mod.workshopId > 0ul)
+            {
+                mods.Add((PublishedFileId_t)mod.workshopId);
+            }
+        }
+        return [.. mods];
     }
 
     public static void TryFetch()
@@ -28,7 +40,7 @@ public static class Workshop
         if(SteamManager.Initialized && ModLastUpdatedDT.Count == 0)
         {
             AppId_t rwID = new AppId_t(RainWorldSteamManager.APP_ID);
-            PublishedFileId_t[] modIds = ModManager.InstalledMods.Where(i => i.workshopMod).Select(i => (PublishedFileId_t)i.workshopId).ToArray();
+            PublishedFileId_t[] modIds = FilterMods();
             lastQueryHandle = SteamUGC.CreateQueryUGCDetailsRequest(modIds, (uint)modIds.Length);
             queryCallback.Set(SteamUGC.SendQueryUGCRequest(lastQueryHandle));
         }

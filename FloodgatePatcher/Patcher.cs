@@ -35,7 +35,7 @@ public static class Patcher
 
     public static void Initialize()
     {
-        logger = Logger.CreateLogSource("FloodgatePatcher");
+        logger ??= Logger.CreateLogSource("FloodgatePatcher");
         ModLoader.Init();
         AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
     }

@@ -100,8 +100,8 @@ public static class CustomMerger
     public static void RealizeCustomMerge(WorldLoader self, ref string[] worldfile)
     {
         //replacedRoomName.Clear();
-        List<string> WorldLines = worldfile.ToList();
-        List<string> fallback = [.. WorldLines];
+        List<string> WorldLines = new(worldfile);
+        List<string> fallback = new(WorldLines);
         bool error = false;
         bool skippedMerging = false;
         try
@@ -238,7 +238,6 @@ public static class CustomMerger
         worldfile = WorldLines.ToArray();
     }
 
-#warning remember to refactor these stupid linqs
     public static void DoOperation(ref List<string> lines, CustomLine merge)
     {
         if (string.IsNullOrWhiteSpace(merge.line))
@@ -251,17 +250,17 @@ public static class CustomMerger
         if (merge.operand == opREMOVE)
         {
             FloodgatePatcher.CustomLog.Log("[World Loader] removing line " + merge.line);
-            lines.RemoveAll(i => i == merge.line);
+            lines.RemoveAllMatches(merge.line);
         }
         else if (merge.operand == opREMOVEALL)
         {
             FloodgatePatcher.CustomLog.Log("[World Loader] removing all lines that contains " + merge.line);
-            lines.RemoveAll(i => i.Contains(merge.line));
+            lines.RemoveAllContainsMatches(merge.line);
         }
         else if(merge.operand == opREMOVELINESTART)
         {
             FloodgatePatcher.CustomLog.Log("[World Loader] removing all lines that starts with " + merge.line);
-            lines.RemoveAll(i => i.StartsWith(merge.line));
+            lines.RemoveAllStartsMatches(merge.line);
         }
         else if (merge.operand == opREPLACE)
         {
@@ -296,17 +295,17 @@ public static class CustomMerger
         else if (merge.operand == opMERGE || string.IsNullOrWhiteSpace(merge.operand))
         {
             string pattern = merge.line.Split(':')[merge.line.StartsWith("LINEAGE") ? 1 : 0] + ":";
-            if (lines.Any(i => i.StartsWith(pattern)))
+            bool found = false;
+            
+            for (int i = 0; i < lines.Count; i++)
             {
-                for (int i = 0; i < lines.Count; i++)
+                if (lines[i].StartsWith(pattern))
                 {
-                    if (lines[i].StartsWith(pattern))
-                    {
-                        lines[i] = merge.line;
-                    }
+                    found = true;
+                    lines[i] = merge.line;
                 }
             }
-            else
+            if(!found)
             {
                 lines.Add(merge.line);
             }
@@ -314,6 +313,50 @@ public static class CustomMerger
         //lines = lines.Distinct().ToList();
     }
 
+    public static bool ListAnyStartsWith(this List<string> list, string match, StringComparison comparer = StringComparison.InvariantCulture)
+    {
+        foreach (string line in list)
+        {
+            if (line.StartsWith(match, comparer))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void RemoveAllMatches(this List<string> list, string match, StringComparison comparer = StringComparison.InvariantCulture)
+    {
+        for(int i = 0; i < list.Count; i++)
+        {
+            if(list[i].Equals(match, comparer))
+            {
+                list.RemoveAt(i--);
+            }
+        }
+    }
+
+    public static void RemoveAllContainsMatches(this List<string> list, string match, StringComparison comparer = StringComparison.InvariantCulture)
+    {
+        for(int i = 0; i < list.Count; i++)
+        {
+            if(list[i].IndexOf(match, comparer) != -1)
+            {
+                list.RemoveAt(i--);
+            }
+        }
+    }
+
+    public static void RemoveAllStartsMatches(this List<string> list, string match, StringComparison comparer = StringComparison.InvariantCulture)
+    {
+        for(int i = 0; i < list.Count; i++)
+        {
+            if(list[i].StartsWith(match, comparer))
+            {
+                list.RemoveAt(i--);
+            }
+        }
+    }
 
     public class CustomLines
     {
@@ -331,10 +374,10 @@ public static class CustomMerger
         {
             foreach (string path in paths)
             {
-                List<string> wLines;
+                string[] wLines;
                 try
                 {
-                    wLines = File.ReadLines(path).ToList();
+                    wLines = File.ReadAllLines(path);
                 }
                 catch (Exception ex)
                 {
@@ -342,7 +385,7 @@ public static class CustomMerger
                     continue;
                 }
                 List<string> lines = new();
-                for (int i = 0; i < wLines.Count; i++)
+                for (int i = 0; i < wLines.Length; i++)
                 {
                     string cur = wLines[i];
 

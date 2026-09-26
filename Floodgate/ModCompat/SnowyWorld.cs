@@ -8,7 +8,7 @@ public static class SnowyWorld
     public static NativeDetour native_GetDesiredCycleLength;
     public static void Apply()
     {
-        InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(new("SnowyWorld", "SnowyWorld.WorldModify"), "RainCycle_GetDesiredCycleLength"));
+        InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(new("SnowyWorld", "SnowyWorld.SnowWorld.WorldModify"), "RainCycle_GetDesiredCycleLength"));
         InlineIL.IL.Pop(out RuntimeMethodHandle GetDesiredCycleLength);
         InlineIL.IL.Emit.Ldtoken(new InlineIL.MethodRef(typeof(ModCompat.SnowyWorld), "Native_RainCycle_GetDesiredCycleLength"));
         InlineIL.IL.Pop(out RuntimeMethodHandle GetDesiredCycleLengthDetour);
