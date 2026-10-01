@@ -167,6 +167,9 @@
     <Reference Include="VoidTemplate">
       <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3127426082\plugins\VoidTemplate.dll</HintPath>
     </Reference>
+    <Reference Include="WetandHot">
+      <HintPath>..\..\..\SteamLibrary\steamapps\workshop\content\312520\3713253793\newest\plugins\WetandHot.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\LoopException.cs" />
@@ -178,6 +181,8 @@
     <Compile Include="ModCompat\DroughtStuff.cs" />
     <Compile Include="ModCompat\EmeraldTweaks.cs" />
     <Compile Include="ModCompat\FasterWorldStuff.cs" />
+    <Compile Include="ModCompat\WetAndHot\M4rblelous.cs" />
+    <Compile Include="ModCompat\WetAndHot\Main.cs" />
     <Compile Include="ModCompat\_LastWish.cs" />
     <Compile Include="ModCompat\Preservatory.cs" />
     <Compile Include="ModCompat\RandomBuff.cs" />

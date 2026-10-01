@@ -15,7 +15,7 @@ public partial class Plugin : BaseUnityPlugin
 {
     public const string GUID = "floodgate";
     public const string Name = "Floodgate";
-    public const string Version = "0.1.32";
+    public const string Version = "0.1.33";
 
     public static Plugin? Instance { get; private set; }
 
@@ -357,6 +357,17 @@ public partial class Plugin : BaseUnityPlugin
                 CustomLog.LogError("M4rblelous Entity Pack specific apply failed\n" + e.ToString());
             }
         }
+        if (FGTools.IsModActive("WetandHot"))
+        {
+            try
+            {
+                ModCompat.WetAndHot.Main.Apply();
+            }
+            catch (Exception e)
+            {
+                CustomLog.LogError("Wet and Hot specific apply failed\n" + e.ToString());
+            }
+        }
         if (FGTools.IsModActive("regionkit"))
         {
             try
@@ -433,6 +444,17 @@ public partial class Plugin : BaseUnityPlugin
         {
             FloodgatePatcher.CustomLog.LogError(e.ToString());
         }
+
+#warning this should be temporary
+        On.Menu.MultiplayerMenu.ButtonsOnSafariPage += static delegate (On.Menu.MultiplayerMenu.orig_ButtonsOnSafariPage orig, Menu.MultiplayerMenu self, int num)
+        {
+            int res = orig(self, num);
+            if (res == 0)
+            {
+                return 21;
+            }
+            return res;
+        };
     }
 
     bool postmodsinit = false;

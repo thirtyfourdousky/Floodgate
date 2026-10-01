@@ -155,8 +155,13 @@ public static class Registry
             string path = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             if (!handledpaths.Contains(path) && (path.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
             {
-                File.Delete(path);
-                //FloodgatePatcher.CustomLog.Log("[File Merging] Deleting file " + path );
+                try
+                {
+                    File.Delete(path);
+                }catch(Exception e)
+                {
+                    FloodgatePatcher.CustomLog.LogError("Error deleting file `" + path + "`\n" + e.ToString());
+                }
             }
         }
         handledpaths.Clear();
@@ -204,7 +209,7 @@ public static class Registry
                     File.Copy(file, destination, false);
                     handledpaths.Add(destination);
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     FloodgatePatcher.CustomLog.LogError("[File Merging] Error copying file " + file + " to " + destination + "\n" + ex.ToString());
                 }
@@ -220,13 +225,60 @@ public static class Registry
                     }
                     handledpaths.Add(destination);
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     FloodgatePatcher.CustomLog.LogError("[File Merging] Error overriding file " + file + " to " + destination + "\n" + ex.ToString());
                 }
             }
         }
     }
+
+    #region todo
+    public static bool MergeSettings(string path, out List<string> result)
+    {
+        string filename = Path.GetFileName(path);
+        if(filename.IndexOf("_settings", StringComparison.OrdinalIgnoreCase) != -1)
+        {
+
+        }
+
+        result = null;
+        return false;
+    }
+
+    public static bool SettingsSetup(List<string> settings)
+    {
+        bool anyChanges = false;
+
+        for(int i = 0; i < settings.Count; i++)
+        {
+
+        }
+
+        return anyChanges;
+    }
+    public const string START_KEY = "[[";
+    public const string END_KEY = "]]";
+    public static bool ProcessLine(string input, out string output)
+    {
+        bool anyChanges = false;
+        int start, end = -1;
+        while((start = input.IndexOf(START_KEY)) != -1 && (end = input.IndexOf(END_KEY)) != -1)
+        {
+            string[] split = input.Substring(start + 2, end - start - 4).Split(["||"], StringSplitOptions.None);
+
+#warning to do
+            if (false)
+            {
+                input = input.Remove(start, end - start + 2).Insert(start, split[0]);
+                anyChanges = true;
+            }
+        }
+
+        output = null;
+        return false;
+    }
+    #endregion
     public static bool ShouldReplace(string path, string target)
     {
         FileInfo source = new FileInfo(path);
